@@ -1,9 +1,8 @@
 <resources>
     <string name="app_name">OTOT</string>
+<!-- Splash -->
     <string name="splash_logo">Splash Logo</string>
     <string name="splash_spinner">Splash Spinner</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="get_started_logo">Get Started Logo</string>
     <string name="let_s_get_started">Let\'s Get Started</string>
     <string name="get_started_slogan">Your all-in-one sports companion.\nTrack, set goals, and connect.\nLet the journey begin.</string>
@@ -28,7 +27,13 @@
         <item>Female</item>
     </string-array>
     <string name="submit">Submit</string>
+<!-- Profile -->
     <string name="profile_preview">Profile Preview</string>
     <string name="insert_image">Insert Image</string>
     <string name="gender">Gender</string>
+    <string-array name="gender_options">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Other</item>
+    </string-array>
 </resources>
