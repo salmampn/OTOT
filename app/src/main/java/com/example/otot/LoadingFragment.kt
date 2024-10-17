@@ -1,5 +1,6 @@
 package com.example.otot
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
 import androidx.fragment.app.Fragment
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.os.Handler
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuth
 
 class LoadingFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,8 +29,16 @@ class LoadingFragment : Fragment() {
 
         // Set a delay of 3 seconds (3000 milliseconds) before moving to the next fragment
         Handler(Looper.getMainLooper()).postDelayed({
-            // Navigate to the GetStartedFragment using the Navigation component
-            findNavController().navigate(R.id.action_loadingFragment_to_getStartedFragment)
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            if (currentUser != null) {
+                // User is logged in, navigate to MainActivity
+                val intent = Intent(requireContext(), MainActivity::class.java)
+                startActivity(intent)
+                requireActivity().finish() // Close SplashActivity
+            } else {
+                // User not logged in, navigate to GetStartedFragment
+                findNavController().navigate(R.id.action_loadingFragment_to_getStartedFragment)
+            }
         }, 3000) // 3000 ms = 3 seconds
     }
 }
