@@ -28,7 +28,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_marginTop="16dp"
-            android:src="@drawable/ambacong"
+            android:src="@drawable/circle_profile"
             android:scaleType="centerCrop"
             android:cropToPadding="true" />
 
@@ -52,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:cardElevation="4dp"
+                app:cardElevation="4dp"
                 android:backgroundTint="#FFFFFF">
 
                 <LinearLayout
@@ -150,7 +150,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:cardElevation="4dp"
+                app:cardElevation="4dp"
                 android:backgroundTint="#FFFFFF">
 
                 <LinearLayout
