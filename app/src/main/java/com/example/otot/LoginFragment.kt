@@ -8,7 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -21,10 +25,14 @@ import com.google.firebase.auth.GoogleAuthProvider
 
 class LoginFragment : Fragment() {
 
-    private lateinit var btnSignUp : Button
-    private lateinit var btnLoginGoogle : ImageView
+    private lateinit var btnSignUp : TextView
+    private lateinit var btnLogin : Button
+    private lateinit var btnLoginGoogle : LinearLayout
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var firebaseAuth: FirebaseAuth
+
+    private lateinit var emailInput: EditText
+    private lateinit var passwordInput: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,18 +56,53 @@ class LoginFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_login, container, false)
 
         // Initialize buttons after inflating the view
-        btnSignUp = view.findViewById(R.id.signup)
-        btnLoginGoogle = view.findViewById(R.id.splash_google)
+        btnLogin = view.findViewById(R.id.btnLogin)
+        btnSignUp = view.findViewById(R.id.sign_up_text)
+        btnLoginGoogle = view.findViewById(R.id.googleLogin)
+
+        // Email and password input fields
+        emailInput = view.findViewById(R.id.email_input)
+        passwordInput = view.findViewById(R.id.password_input)
 
         // Set up navigation for signup button
         btnSignUp.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_signupFragment)
         }
 
-        btnLoginGoogle.setOnClickListener {
+        btnLogin.setOnClickListener {
+            val email = emailInput.text.toString()
+            val password = passwordInput.text.toString()
+            if (email.isNotEmpty() && password.isNotEmpty()) {
+                loginUser(email, password)
+            } else {
+                // // Display error message if email or password is empty
+                Toast.makeText(requireContext(), "Email and password must not be empty", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+       btnLoginGoogle.setOnClickListener {
             signInWithGoogle()
         }
         return view
+    }
+
+    private fun loginUser(email: String, password: String) {
+        firebaseAuth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener(requireActivity()) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, navigate to MainActivity
+                    val intent = Intent(requireContext(), MainActivity::class.java)
+                    startActivity(intent)
+                    requireActivity().finish()
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Toast.makeText(requireContext(), "Authentication failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener { e ->
+                // Handle error (e.g., wrong credentials, network error)
+                Toast.makeText(requireContext(), "Authentication failed: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun signInWithGoogle() {
@@ -81,6 +124,7 @@ class LoginFragment : Fragment() {
             firebaseAuthWithGoogle(account!!)
         } catch (e: ApiException) {
             // Google Sign In failed, update UI appropriately
+            Toast.makeText(requireContext(), "Google sign in failed: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -97,6 +141,7 @@ class LoginFragment : Fragment() {
                     requireActivity().finish()
                 } else {
                     // If sign in fails, display a message to the user.
+                    Toast.makeText(requireContext(), "Authentication failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }
             }
     }

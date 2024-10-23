@@ -7,7 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageView
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -20,10 +23,14 @@ import com.google.firebase.auth.GoogleAuthProvider
 
 class SignupFragment : Fragment() {
 
-    private lateinit var btnLogin: Button
-    private lateinit var btnSignupGoogle : ImageView
+    private lateinit var btnSignup: Button
+    private lateinit var btnLogin: TextView
+    private lateinit var btnSignupGoogle : LinearLayout
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var firebaseAuth: FirebaseAuth
+
+    private lateinit var emailInput: EditText
+    private lateinit var passwordInput: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,8 +54,36 @@ class SignupFragment : Fragment() {
         val view =  inflater.inflate(R.layout.fragment_signup, container, false)
 
         // Initialize buttons after inflating the view
-        btnLogin = view.findViewById(R.id.login)
-        btnSignupGoogle = view.findViewById(R.id.splash_google)
+        btnSignup = view.findViewById(R.id.btnSignup)
+        btnLogin = view.findViewById(R.id.login_text)
+        btnSignupGoogle = view.findViewById(R.id.googleSignup)
+
+        // Email and password input fields
+        emailInput = view.findViewById(R.id.email_input)
+        passwordInput = view.findViewById(R.id.password_input)
+
+        // Set up navigation for signup button
+        btnSignup.setOnClickListener {
+            // Get email and password from input fields
+            val email = emailInput.text.toString()
+            val password = passwordInput.text.toString()
+
+            // Create a new user with email and password
+            firebaseAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(requireActivity()) { task ->
+                    if (task.isSuccessful) {
+                        // Sign up success, update UI with the signed-in user's information
+                        val user = firebaseAuth.currentUser
+                        Toast.makeText(requireContext(), "Sign up success", Toast.LENGTH_SHORT).show()
+                        // Navigate to InitProfileFragment
+                        findNavController().navigate(R.id.action_signupFragment_to_initProfileFragment)
+                    } else {
+                        // If sign up fails, display a message to the user.
+                        Toast.makeText(requireContext(), "Sign up failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+        }
+
 
         // Set up navigation for login button
         btnLogin.setOnClickListener {
@@ -79,6 +114,7 @@ class SignupFragment : Fragment() {
             firebaseAuthWithGoogle(account!!)
         } catch (e: ApiException) {
             // Google Sign In failed, update UI appropriately
+            Toast.makeText(requireContext(), "Authentication failed: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -89,12 +125,15 @@ class SignupFragment : Fragment() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     val user = firebaseAuth.currentUser
+                    // Navigate to InitProfileFragment
+                    findNavController().navigate(R.id.action_signupFragment_to_initProfileFragment)
                     // Navigate to MainActivity
-                    val intent = Intent(requireContext(), MainActivity::class.java)
-                    startActivity(intent)
-                    requireActivity().finish()
+//                    val intent = Intent(requireContext(), MainActivity::class.java)
+//                    startActivity(intent)
+//                    requireActivity().finish()
                 } else {
                     // If sign in fails, display a message to the user.
+                    Toast.makeText(requireContext(), "Authentication failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }
             }
     }
