@@ -29,16 +29,8 @@ class LoadingFragment : Fragment() {
 
         // Set a delay of 3 seconds (3000 milliseconds) before moving to the next fragment
         Handler(Looper.getMainLooper()).postDelayed({
-            val currentUser = FirebaseAuth.getInstance().currentUser
-            if (currentUser != null) {
-                // User is logged in, navigate to MainActivity
-                val intent = Intent(requireContext(), MainActivity::class.java)
-                startActivity(intent)
-                requireActivity().finish() // Close SplashActivity
-            } else {
-                // User not logged in, navigate to GetStartedFragment
-                findNavController().navigate(R.id.action_loadingFragment_to_getStartedFragment)
-            }
+            // User not logged in, navigate to GetStartedFragment
+            findNavController().navigate(R.id.action_loadingFragment_to_getStartedFragment)
         }, 3000) // 3000 ms = 3 seconds
     }
 }
