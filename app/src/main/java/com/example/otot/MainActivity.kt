@@ -19,7 +19,22 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        FirebaseApp.initializeApp(this)
+        FirebaseAppCheck.getInstance().installAppCheckProviderFactory(
+            PlayIntegrityAppCheckProviderFactory.getInstance()
+        )
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser == null) {
+            // User is not logged in, redirect to AuthActivity
+            val intent = Intent(this, SplashActivity::class.java)
+            startActivity(intent)
+            finish() // Close MainActivity so that the user cannot go back to it
+            return
+        }
+        
         setContentView(R.layout.activity_main)
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
