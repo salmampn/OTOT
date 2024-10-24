@@ -1,4 +1,4 @@
-package com.example.otot
+package com.example.otot.model
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,19 +6,19 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.otot.model.HistoryModel
+import com.example.otot.R
 
 class HistoryAdapter(private val historyList: List<HistoryModel>) :
     RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
 
     class HistoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val dateAndLocation: TextView = view.findViewById(R.id.text_date_location)
-        val distance: TextView = view.findViewById(R.id.text_distance)
-        val steps: TextView = view.findViewById(R.id.text_steps)
-        val movingTime: TextView = view.findViewById(R.id.text_moving_time)
-        val avgPace: TextView = view.findViewById(R.id.text_avg_pace)
-        val calories: TextView = view.findViewById(R.id.text_calories)
-        val avgHeartRate: TextView = view.findViewById(R.id.text_avg_heart_rate)
+        val distance: TextView = view.findViewById(R.id.text_distance_value)
+        val steps: TextView = view.findViewById(R.id.text_steps_value)
+        val movingTime: TextView = view.findViewById(R.id.text_moving_time_value)
+        val avgPace: TextView = view.findViewById(R.id.text_avg_pace_value)
+        val calories: TextView = view.findViewById(R.id.text_calories_value)
+        val avgHeartRate: TextView = view.findViewById(R.id.text_avg_heart_rate_value)
         val routeImage: ImageView = view.findViewById(R.id.image_route_map)
     }
 
