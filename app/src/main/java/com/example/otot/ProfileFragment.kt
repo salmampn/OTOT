@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 
 class ProfileFragment : Fragment() {
@@ -20,7 +21,7 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
-
+        val editprofileBtn = view?.findViewById<TextView>(R.id.tv_edit_profile)
         val logoutTextView = view?.findViewById<TextView>(R.id.tv_logout)
 //        logoutTextView?.setOnClickListener {
 //            FirebaseAuth.getInstance().signOut()
@@ -37,6 +38,9 @@ class ProfileFragment : Fragment() {
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             requireActivity().finish()
+        }
+        editprofileBtn?.setOnClickListener {
+            findNavController().navigate(R.id.action_profileFragment_to_editprofileFragment)
         }
 
         return view

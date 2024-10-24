@@ -25,17 +25,29 @@
         android:id="@+id/historyFragment"
         android:name="com.example.otot.HistoryFragment"
         android:label="History"
-        tools:layout="@layout/fragment_history" >
-    </fragment>
+        tools:layout="@layout/fragment_history" />
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.otot.ProfileFragment"
         android:label="Profile"
-        tools:layout="@layout/fragment_profile" />
-
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profileFragment_to_editprofileFragment"
+            app:destination="@id/EditprofileFragment" />
+    </fragment>
     <activity
         android:id="@+id/runningActivity"
         android:name="com.example.otot.RunningActivity"
         android:label="activity_running"
         tools:layout="@layout/activity_running" />
+    <fragment
+        android:id="@+id/EditprofileFragment"
+        android:name="com.example.otot.EditprofileFragment"
+        android:label="Edit Profile" />
 </navigation>
+
+
+
+
+
+
