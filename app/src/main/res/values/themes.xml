@@ -3,6 +3,7 @@
     <style name="Base.Theme.OTOT" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:textColor">@color/black</item>
     </style>
 
     <style name="Theme.OTOT" parent="Base.Theme.OTOT" />

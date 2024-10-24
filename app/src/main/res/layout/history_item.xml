@@ -1,78 +1,162 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp">
-
-    <TextView
-        android:id="@+id/text_date_location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="26 April 2024 | Seattle, USA"
-        android:textStyle="bold"
-        android:layout_gravity="center"/>
-
-    <ImageView
-        android:id="@+id/image_route_map"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/map1" />
+    card_view:cardCornerRadius="12dp"
+    card_view:cardElevation="6dp"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="16dp"
+    android:background="?attr/selectableItemBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <LinearLayout
-            android:layout_width="0dp"
+        <!-- Date and Location Text -->
+        <TextView
+            android:id="@+id/text_date_location"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:layout_gravity="center"
+            android:paddingBottom="8dp" />
 
-            <TextView
-                android:id="@+id/text_distance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="18.5 km" />
+        <!-- Route Map Image -->
+        <ImageView
+            android:id="@+id/image_route_map"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/map1"
+            android:layout_marginBottom="12dp" />
 
-            <TextView
-                android:id="@+id/text_moving_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="1:17:05" />
-
-            <TextView
-                android:id="@+id/text_calories"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="322 Kcal" />
-        </LinearLayout>
-
+        <!-- Details Container -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:weightSum="2">
 
-            <TextView
-                android:id="@+id/text_steps"
-                android:layout_width="wrap_content"
+            <!-- Left Column -->
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="7,389" />
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/text_avg_pace"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="3:19/km" />
+                <!-- Distance Text -->
+                <TextView
+                    android:id="@+id/text_distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Distance"
+                    android:textSize="12sp"
+                    android:textColor="@color/red" />
 
-            <TextView
-                android:id="@+id/text_avg_heart_rate"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/text_distance_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:paddingBottom="4dp" />
+
+                <!-- Moving Time Text -->
+                <TextView
+                    android:id="@+id/text_moving_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Moving Time"
+                    android:textSize="12sp"
+                    android:textColor="@color/red" />
+
+                <TextView
+                    android:id="@+id/text_moving_time_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:paddingBottom="4dp" />
+
+                <!-- Calories Text -->
+                <TextView
+                    android:id="@+id/text_calories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Calories"
+                    android:textSize="12sp"
+                    android:textColor="@color/red" />
+
+                <TextView
+                    android:id="@+id/text_calories_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Right Column -->
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="132 bpm" />
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <!-- Steps Text -->
+                <TextView
+                    android:id="@+id/text_steps"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Steps"
+                    android:textSize="12sp"
+                    android:textColor="@color/red" />
+
+                <TextView
+                    android:id="@+id/text_steps_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:paddingBottom="4dp" />
+
+                <!-- Avg Pace Text -->
+                <TextView
+                    android:id="@+id/text_avg_pace"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Avg Pace"
+                    android:textSize="12sp"
+                    android:textColor="@color/red" />
+
+                <TextView
+                    android:id="@+id/text_avg_pace_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:paddingBottom="4dp" />
+
+                <!-- Avg Heart Rate Text -->
+                <TextView
+                    android:id="@+id/text_avg_heart_rate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Avg Heart Rate"
+                    android:textSize="12sp"
+                    android:textColor="@color/red" />
+
+                <TextView
+                    android:id="@+id/text_avg_heart_rate_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</androidx.cardview.widget.CardView>
