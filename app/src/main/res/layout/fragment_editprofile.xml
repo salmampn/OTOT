@@ -1,78 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#f5f5f5"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="#f5f5f5">
+    android:padding="16dp">
 
-    <ImageView
-        android:id="@+id/profile_image"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="24dp"
-        android:src="@drawable/circle_profile"
-        android:scaleType="centerCrop"
-        android:contentDescription="Profile Image" />
+        android:layout_marginTop="80dp">
+
+        <ImageView
+            android:id="@+id/profile_image"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:background="@drawable/border_editprofile"
+            android:contentDescription="Profile Image"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="80dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/photo_camera_red"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <EditText
         android:id="@+id/et_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/border_edittext"
         android:hint="Name"
         android:inputType="textPersonName"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="#FFCDD2"
         android:padding="12dp" />
 
     <EditText
         android:id="@+id/et_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/border_edittext"
         android:hint="Username"
         android:inputType="textPersonName"
-        android:layout_marginTop="8dp"
-        android:backgroundTint="#FFCDD2"
         android:padding="12dp" />
 
     <EditText
         android:id="@+id/et_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/border_edittext"
         android:hint="Email"
         android:inputType="textEmailAddress"
-        android:layout_marginTop="8dp"
-        android:backgroundTint="#FFCDD2"
         android:padding="12dp" />
 
     <EditText
         android:id="@+id/et_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/border_edittext"
         android:hint="Password"
         android:inputType="textPassword"
-        android:layout_marginTop="8dp"
-        android:backgroundTint="#FFCDD2"
         android:padding="12dp" />
 
     <Spinner
         android:id="@+id/spinner_gender"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_marginTop="8dp"
-        android:padding="12dp"
-        android:backgroundTint="#FFCDD2"
-        android:entries="@array/gender_options" />
+        android:background="@drawable/border_edittext"
+        android:entries="@array/gender_options"
+        android:padding="12dp" />
 
     <Button
         android:id="@+id/btn_save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save Change"
-        android:textColor="@android:color/white"
-        android:backgroundTint="#FFC107"
         android:layout_marginTop="16dp"
-        android:padding="16dp" />
+        android:background="@drawable/rounded_corner_yellow"
+        android:padding="8dp"
+        android:text="Save Change"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 </LinearLayout>

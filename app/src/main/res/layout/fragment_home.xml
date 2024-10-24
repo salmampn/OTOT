@@ -42,8 +42,7 @@
                 android:layout_height="wrap_content"
                 android:text="Your Weekly Record"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_gravity="center" />
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"

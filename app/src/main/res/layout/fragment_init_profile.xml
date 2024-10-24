@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_gradient"
+    android:padding="0dp"
     tools:context=".LoginFragment"
     tools:layout_editor_absoluteX="32dp"
-    tools:layout_editor_absoluteY="16dp"
-    android:padding="0dp">
+    tools:layout_editor_absoluteY="16dp">
 
     <!-- Logo -->
     <ImageView
@@ -60,12 +60,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        app:cardCornerRadius="16dp"
-        app:cardBackgroundColor="@android:color/transparent"
         android:background="@drawable/rounded_corner"
-        app:layout_constraintTop_toBottomOf="@id/sub_greeting"
-        app:layout_constraintStart_toStartOf="parent"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardCornerRadius="16dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sub_greeting"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent="0.85">
 
@@ -94,17 +94,23 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0" />
 
-<!--            <ImageView-->
-<!--                android:id="@+id/baseline_photo_camera"-->
-<!--                android:layout_width="30dp"-->
-<!--                android:layout_height="35dp"-->
-<!--                android:alpha="0.9"-->
-<!--                android:contentDescription="@string/insert_image"-->
-<!--                android:src="@drawable/photo_camera"-->
-<!--                tools:layout_editor_absoluteX="146dp"-->
-<!--                tools:layout_editor_absoluteY="98dp" />-->
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="80dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/photo_camera_white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.533"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.221" />
 
             <!-- Name Input -->
+
+
             <TextView
                 android:id="@+id/name_label"
                 android:layout_width="wrap_content"
@@ -168,12 +174,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/rounded_corner_white"
+                android:clickable="true"
                 android:focusable="true"
                 android:padding="12dp"
-                android:clickable="true"
                 android:spinnerMode="dropdown"
                 android:textColor="@color/black"
-                app:layout_constraintTop_toBottomOf="@+id/gender_label"/>
+                app:layout_constraintTop_toBottomOf="@+id/gender_label" />
 
             <!-- Continue Button -->
             <Button
@@ -183,11 +189,11 @@
                 android:layout_marginTop="32dp"
                 android:background="@drawable/rounded_corner_yellow"
                 android:backgroundTint="@color/yellow"
+                android:clickable="true"
                 android:focusable="true"
                 android:padding="8dp"
                 android:text="Continue"
                 android:textColor="@color/black"
-                android:clickable="true"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/gender_spinner"
                 tools:layout_editor_absoluteX="40dp" />
