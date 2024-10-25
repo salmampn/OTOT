@@ -17,7 +17,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#FF0000"
+            android:background="#D70000"
             android:elevation="4dp"
             app:titleTextColor="@android:color/white"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="4dp"
         app:menu="@menu/nav_menu"
-        android:background="#FF0000"
+        android:background="#D70000"
         app:itemIconTint="@color/white"
         app:itemTextColor="@color/white"
         app:labelVisibilityMode="labeled" />
