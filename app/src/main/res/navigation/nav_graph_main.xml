@@ -46,11 +46,25 @@
     <fragment
         android:id="@+id/EditprofileFragment"
         android:name="com.example.otot.EditprofileFragment"
-        android:label="Edit Profile" />
+        android:label="Edit Profile">
+        <action
+            android:id="@+id/action_editprofileFragment_to_profileFragment"
+            app:destination="@id/profileFragment"
+            />
+    </fragment>
     <fragment
         android:id="@+id/changePasswordFragment"
         android:name="com.example.otot.ChangePasswordFragment"
         android:label="Change Password" />
+    <fragment
+        android:id="@+id/postRunningFragment"
+        android:name="com.example.otot.PostRunningFragment"
+        android:label="fragment_post_running"
+        tools:layout="@layout/fragment_post_running" >
+        <action
+            android:id="@+id/action_postRunningFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
 </navigation>
 
 
