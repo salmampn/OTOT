@@ -2,69 +2,76 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:orientation="vertical"
     android:padding="16dp"
-    android:gravity="center"
     tools:context=".PostRunningFragment">
 
     <ImageView
         android:id="@+id/routeMapImage"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="265dp"
         android:layout_gravity="center"
+        android:clipToOutline="true"
+        android:foreground="@drawable/image_border"
         android:scaleType="centerCrop"
-        android:src="@drawable/map1"
-        android:background="@drawable/image_border"/>
+        android:src="@drawable/map1" />
 
     <TextView
         android:id="@+id/congratulationsTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Congratulations"
-        android:textStyle="bold"
-        android:textSize="18sp"
+        android:layout_marginTop="10dp"
         android:gravity="center"
-        android:layout_marginTop="10dp" />
+        android:text="Congratulations"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/congratulationsSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="for your excellent performance during this session."
-        android:textSize="14sp"
+        android:layout_marginBottom="16dp"
         android:gravity="center"
-        android:layout_marginBottom="16dp" />
+        android:text="for your excellent performance during this session."
+        android:textSize="14sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/red" />
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:background="@android:color/white"
         android:layout_marginBottom="20dp"
-        android:gravity="center">
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="horizontal"
-            android:weightSum="2"
-            android:gravity="center">
+            android:weightSum="2">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_weight="1"
-                android:padding="8dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="8dp">
 
                 <TextView
                     android:id="@+id/distanceLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/red"
                     android:text="Distance"
+                    android:textColor="@color/red"
                     android:textSize="14sp" />
 
                 <TextView
@@ -72,17 +79,24 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="18.5 km"
-                    android:textStyle="bold"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
             </LinearLayout>
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@color/gray" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_weight="1"
-                android:padding="8dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="8dp">
 
                 <TextView
                     android:id="@+id/stepsLabel"
@@ -97,25 +111,25 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="7,389"
-                    android:textStyle="bold"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="horizontal"
-            android:weightSum="2"
-            android:gravity="center">
+            android:weightSum="2">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_weight="1"
-                android:padding="8dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="8dp">
 
                 <TextView
                     android:id="@+id/movingTimeLabel"
@@ -130,17 +144,24 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="1:17:05"
-                    android:textStyle="bold"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
             </LinearLayout>
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@color/gray" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_weight="1"
-                android:padding="8dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="8dp">
 
                 <TextView
                     android:id="@+id/avgPaceLabel"
@@ -155,25 +176,25 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="3:19/km"
-                    android:textStyle="bold"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="horizontal"
-            android:weightSum="2"
-            android:gravity="center">
+            android:weightSum="2">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_weight="1"
-                android:padding="8dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="8dp">
 
                 <TextView
                     android:id="@+id/caloriesLabel"
@@ -188,17 +209,24 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="322 Kcal"
-                    android:textStyle="bold"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
             </LinearLayout>
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@color/gray" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_weight="1"
-                android:padding="8dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="8dp">
 
                 <TextView
                     android:id="@+id/avgHeartRateLabel"
@@ -213,8 +241,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="132 bpm"
-                    android:textStyle="bold"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -225,22 +253,23 @@
         android:id="@+id/viewAnalysisButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rounded_corner_yellow"
         android:text="View Analysis"
-        android:textStyle="bold"
         android:textAllCaps="false"
-        android:backgroundTint="#FFC107"
         android:textColor="@android:color/black"
-        android:layout_marginBottom="16dp" />
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/continueButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+
+        android:background="@drawable/rounded_corner_white"
         android:text="Continue"
-        android:textStyle="bold"
         android:textAllCaps="false"
-        android:backgroundTint="#FFFFFF"
         android:textColor="@android:color/black"
-        android:layout_marginBottom="16dp" />
+        android:textStyle="bold" />
 
 </LinearLayout>

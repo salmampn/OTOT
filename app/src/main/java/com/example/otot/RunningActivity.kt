@@ -47,7 +47,7 @@ class RunningActivity : AppCompatActivity(), OnMapReadyCallback {
         mapView = findViewById(R.id.mapView)
         btnStart = findViewById(R.id.btnStart)
         btnFinish = findViewById(R.id.btnFinish)
-        tvDistance = findViewById(R.id.tvDistance)
+        tvDistance = findViewById(R.id.tvDistance1)
         tvTime = findViewById(R.id.tvTime)
         tvHeartRate = findViewById(R.id.tvHeartRate)
 

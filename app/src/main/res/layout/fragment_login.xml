@@ -92,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Email"
                 android:inputType="textEmailAddress"
-                android:background="@drawable/rounded_corner_white"
+                android:background="@drawable/rounded_corner_white_red"
                 android:textColor="@color/black"
                 android:padding="12dp" />
 
@@ -113,7 +113,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Password"
                 android:inputType="textPassword"
-                android:background="@drawable/rounded_corner_white"
+                android:background="@drawable/rounded_corner_white_red"
                 android:textColor="@color/black"
                 android:padding="12dp" />
 
@@ -179,7 +179,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:background="@drawable/rounded_corner_white"
+                android:background="@drawable/rounded_corner_white_red"
                 android:padding="10dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="12dp">
