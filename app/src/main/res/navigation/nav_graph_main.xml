@@ -11,26 +11,39 @@
         android:label="Home"
         tools:layout="@layout/fragment_home" >
         <action
+            android:id="@+id/action_homeFragment_to_startRunningFragment"
+            app:destination="@id/startRunningFragment" />
+        <action
             android:id="@+id/action_homeFragment_to_historyFragment"
             app:destination="@id/historyFragment" />
         <action
             android:id="@+id/action_homeFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_runningActivity"
-            app:destination="@id/runningActivity" />
     </fragment>
 
     <fragment
         android:id="@+id/historyFragment"
         android:name="com.example.otot.HistoryFragment"
         android:label="History"
-        tools:layout="@layout/fragment_history" />
+        tools:layout="@layout/fragment_history">
+        <action
+            android:id="@+id/action_historyFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_historyFragment_to_startRunningFragment"
+            app:destination="@id/startRunningFragment" />
+        <action
+            android:id="@+id/action_historyFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.otot.ProfileFragment"
         android:label="Profile"
         tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profileFragment_to_startRunningFragment"
+            app:destination="@id/startRunningFragment" />
         <action
             android:id="@+id/action_profileFragment_to_editprofileFragment"
             app:destination="@id/EditprofileFragment" />
@@ -38,15 +51,11 @@
             android:id="@+id/action_profileFragment_to_changePasswordFragment"
             app:destination="@id/changePasswordFragment" />
     </fragment>
-    <activity
-        android:id="@+id/runningActivity"
-        android:name="com.example.otot.RunningActivity"
-        android:label="activity_running"
-        tools:layout="@layout/activity_running" />
     <fragment
         android:id="@+id/EditprofileFragment"
         android:name="com.example.otot.EditprofileFragment"
         android:label="Edit Profile">
+
         <action
             android:id="@+id/action_editprofileFragment_to_profileFragment"
             app:destination="@id/profileFragment"
@@ -59,11 +68,29 @@
     <fragment
         android:id="@+id/postRunningFragment"
         android:name="com.example.otot.PostRunningFragment"
-        android:label="fragment_post_running"
+        android:label="Running"
         tools:layout="@layout/fragment_post_running" >
         <action
             android:id="@+id/action_postRunningFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/startRunningFragment"
+        android:name="com.example.otot.StartRunningFragment"
+        android:label="Running"
+        tools:layout="@layout/fragment_start_running" >
+        <action
+            android:id="@+id/action_startRunningFragment_to_pauseRunningFragment"
+            app:destination="@id/pauseRunningFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/pauseRunningFragment"
+        android:name="com.example.otot.PauseRunningFragment"
+        android:label="Running"
+        tools:layout="@layout/fragment_pause_running" >
+        <action
+            android:id="@+id/action_pauseRunningFragment_to_postRunningFragment"
+            app:destination="@id/postRunningFragment" />
     </fragment>
 </navigation>
 

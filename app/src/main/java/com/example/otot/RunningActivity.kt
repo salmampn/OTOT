@@ -44,12 +44,12 @@ class RunningActivity : AppCompatActivity(), OnMapReadyCallback {
         setContentView(R.layout.activity_running)
 
         // Initialize UI elements
-        mapView = findViewById(R.id.mapView)
-        btnStart = findViewById(R.id.btnStart)
-        btnFinish = findViewById(R.id.btnFinish)
-        tvDistance = findViewById(R.id.tvDistance1)
-        tvTime = findViewById(R.id.tvTime)
-        tvHeartRate = findViewById(R.id.tvHeartRate)
+//        mapView = findViewById(R.id.mapView)
+//        btnStart = findViewById(R.id.btnStart)
+//        btnFinish = findViewById(R.id.btnFinish)
+//        tvDistance = findViewById(R.id.tvDistance1)
+//        tvTime = findViewById(R.id.tvTime)
+//        tvHeartRate = findViewById(R.id.tvHeartRate1)
 
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)

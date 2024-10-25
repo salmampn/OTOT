@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_track -> {
-                    navController.navigate(R.id.runningActivity)
+                    navController.navigate(R.id.startRunningFragment)
                     true
                 }
                 R.id.nav_history -> {
@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.homeFragment -> updateBottomNavIcons(R.drawable.home, R.drawable.inactive_track, R.drawable.inactive_history, R.drawable.inactive_profile)
-                R.id.runningActivity -> updateBottomNavIcons(R.drawable.inactive_home, R.drawable.track, R.drawable.inactive_history, R.drawable.inactive_profile)
+                R.id.startRunningFragment -> updateBottomNavIcons(R.drawable.inactive_home, R.drawable.track, R.drawable.inactive_history, R.drawable.inactive_profile)
                 R.id.historyFragment -> updateBottomNavIcons(R.drawable.inactive_home, R.drawable.inactive_track, R.drawable.history, R.drawable.inactive_profile)
                 R.id.profileFragment -> updateBottomNavIcons(R.drawable.inactive_home, R.drawable.inactive_track, R.drawable.inactive_history, R.drawable.profile)
             }
