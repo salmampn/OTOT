@@ -73,6 +73,9 @@
         <action
             android:id="@+id/action_postRunningFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_postRunningFragment_to_analysisFragment"
+            app:destination="@id/analysisFragment" />
     </fragment>
     <fragment
         android:id="@+id/startRunningFragment"
@@ -92,6 +95,11 @@
             android:id="@+id/action_pauseRunningFragment_to_postRunningFragment"
             app:destination="@id/postRunningFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/analysisFragment"
+        android:name="com.example.otot.AnalysisFragment"
+        android:label="Analysis"
+        tools:layout="@layout/fragment_analysis" />
 </navigation>
 
 
