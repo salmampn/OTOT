@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:startColor="#FD4747"
+        android:endColor="#D70000"
+        android:angle="90" />
+
+    <corners android:radius="50dp" />  <!-- Rounded corners -->
+
+    <padding
+        android:left="8dp"
+        android:right="8dp"
+        android:top="4dp"
+        android:bottom="4dp" />  <!-- Adjust padding to create a convex look -->
+</shape>

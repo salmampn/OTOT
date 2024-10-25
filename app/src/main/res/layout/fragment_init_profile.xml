@@ -78,25 +78,46 @@
             android:paddingVertical="32dp">
 
             <!-- Profile Image -->
-            <ImageView
-                android:id="@+id/profile_image"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
+            <FrameLayout
+                android:id="@+id/profile_image_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:background="@drawable/circle_profile"
-                android:clickable="true"
-                android:contentDescription="Profile Picture"
-                android:focusable="true"
-                android:src="@drawable/prev_image"
+                android:layout_marginTop="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintVertical_bias="0.0">
+
+                <!-- Background border circle -->
+                <ImageView
+                    android:layout_width="124dp"
+                    android:layout_height="124dp"
+                    android:src="@drawable/circle_profile"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0"/>
+
+                <!-- Profile image inside the border -->
+                <ImageView
+                    android:id="@+id/profile_image"
+                    android:layout_width="114dp"
+                    android:layout_height="114dp"
+                    android:layout_gravity="center"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0"/>
+            </FrameLayout>
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="31dp"
+                android:layout_height="38dp"
                 android:layout_marginStart="80dp"
                 android:layout_marginTop="7dp"
                 android:layout_marginEnd="16dp"
@@ -109,8 +130,6 @@
                 app:layout_constraintVertical_bias="0.221" />
 
             <!-- Name Input -->
-
-
             <TextView
                 android:id="@+id/name_label"
                 android:layout_width="wrap_content"
@@ -120,7 +139,7 @@
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@+id/profile_image" />
+                app:layout_constraintTop_toBottomOf="@+id/profile_image_container" />
 
             <EditText
                 android:id="@+id/name_input"

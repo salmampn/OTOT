@@ -93,11 +93,11 @@ class InitProfileFragment : Fragment() {
             imageUri = data.data!!
             Glide.with(this)
                 .load(imageUri)
-                .placeholder(R.drawable.circle_image_background) // Add a placeholder image in your resources
-                .error(R.drawable.prev_image)  // Add an error image in your resources
+                .placeholder(R.drawable.circle_profile) // Add a placeholder image in your resources
+                .error(R.drawable.default_profile)  // Add an error image in your resources
+                .centerInside()
                 .circleCrop()  // Optional, if you want to crop the image into a circular shape
                 .into(profileImageView)
-
         }
     }
 
@@ -112,7 +112,6 @@ class InitProfileFragment : Fragment() {
             genderSpinner.adapter = adapter
         }
     }
-
 
     // Save profile data to Firestore and upload image to Firebase Storage
     private fun saveProfile(name: String, username: String, selectedGender: String) {
