@@ -5,19 +5,36 @@
     android:layout_height="match_parent"
     tools:context=".HomeFragment">
 
-    <!-- Hello, User Text -->
-    <TextView
-        android:id="@+id/hello_text"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="HELLO, Izam"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp"
+        android:id="@+id/greetings"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:textColor="@color/black" />
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Hello, User Text -->
+        <TextView
+            android:id="@+id/hello_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hello, "
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hello"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/black" />
+
+    </LinearLayout>
 
     <!-- Weekly Record Card -->
     <androidx.cardview.widget.CardView
@@ -27,7 +44,7 @@
         android:layout_margin="16dp"
         app:cardCornerRadius="12dp"
         app:cardElevation="6dp"
-        app:layout_constraintTop_toBottomOf="@id/hello_text"
+        app:layout_constraintTop_toBottomOf="@id/greetings"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
