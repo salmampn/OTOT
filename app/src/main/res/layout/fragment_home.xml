@@ -165,6 +165,12 @@
                 android:textColor="@color/black"
                 android:layout_marginTop="4dp" />
             <!-- Replace with an actual graph view if needed -->
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:layout_marginTop="0dp"
+                android:src="@drawable/distance" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
@@ -193,53 +199,118 @@
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
-            <LinearLayout
+            <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp"
-                android:weightSum="2">
+                android:layout_marginTop="8dp">
 
-                <!-- Activity 1 -->
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_weight="1"
-                    android:gravity="center">
+                    android:orientation="horizontal">
 
-                    <ImageView
-                        android:layout_width="100dp"
-                        android:layout_height="60dp"
-                        android:src="@drawable/ic_run" />
-                    <TextView
+                    <!-- Activity 1 -->
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="5K Run\n30m"
-                        android:textSize="14sp"
-                        android:gravity="center" />
-                </LinearLayout>
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_marginEnd="8dp">
 
-                <!-- Activity 2 -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_weight="1"
-                    android:gravity="center">
+                        <ImageView
+                            android:layout_width="100dp"
+                            android:layout_height="60dp"
+                            android:src="@drawable/ic_run" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="5K Run\n30m"
+                            android:textSize="14sp"
+                            android:gravity="center" />
+                    </LinearLayout>
 
-                    <ImageView
-                        android:layout_width="100dp"
-                        android:layout_height="60dp"
-                        android:src="@drawable/ic_run" />
-                    <TextView
+                    <!-- Activity 2 -->
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="5K Run\n30m"
-                        android:textSize="14sp"
-                        android:gravity="center" />
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_marginEnd="8dp">
+
+                        <ImageView
+                            android:layout_width="100dp"
+                            android:layout_height="60dp"
+                            android:src="@drawable/ic_run" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="5K Run\n30m"
+                            android:textSize="14sp"
+                            android:gravity="center" />
+                    </LinearLayout>
+
+                    <!-- Item 3-->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_marginEnd="8dp">
+
+                        <ImageView
+                            android:layout_width="100dp"
+                            android:layout_height="60dp"
+                            android:src="@drawable/ic_run" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="5K Run\n30m"
+                            android:textSize="14sp"
+                            android:gravity="center" />
+                    </LinearLayout>
+
+                    <!-- Item 4-->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_marginEnd="8dp">
+
+                        <ImageView
+                            android:layout_width="100dp"
+                            android:layout_height="60dp"
+                            android:src="@drawable/ic_run" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="5K Run\n30m"
+                            android:textSize="14sp"
+                            android:gravity="center" />
+                    </LinearLayout>
+
+                    <!-- Item 5-->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_marginEnd="8dp">
+
+                        <ImageView
+                            android:layout_width="100dp"
+                            android:layout_height="60dp"
+                            android:src="@drawable/ic_run" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="5K Run\n30m"
+                            android:textSize="14sp"
+                            android:gravity="center" />
+                    </LinearLayout>
+
                 </LinearLayout>
-            </LinearLayout>
+            </HorizontalScrollView>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
