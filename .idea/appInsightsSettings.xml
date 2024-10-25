@@ -9,10 +9,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="com.example.otot" />
-                  <option name="mobileSdkAppId" value="1:332237458692:android:256a5cc9191c656c001451" />
-                  <option name="projectId" value="otot-7a509" />
-                  <option name="projectNumber" value="332237458692" />
+                  <option name="appId" value="PLACEHOLDER" />
+                  <option name="mobileSdkAppId" value="" />
+                  <option name="projectId" value="" />
+                  <option name="projectNumber" value="" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
