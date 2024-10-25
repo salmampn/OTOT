@@ -2,10 +2,12 @@ package com.example.otot
 
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -52,6 +54,18 @@ class MainActivity : AppCompatActivity() {
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+
+        // Enable the back arrow (navigation icon) and set its color
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setHomeAsUpIndicator(R.drawable.ic_back_arrow) // Optional: If using a custom back arrow icon
+        }
+
+        // Set the back arrow (navigation icon) color to white
+        toolbar.navigationIcon?.setColorFilter(
+            ContextCompat.getColor(this, android.R.color.white),
+            PorterDuff.Mode.SRC_ATOP
+        )
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController

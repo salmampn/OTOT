@@ -34,6 +34,9 @@
         <action
             android:id="@+id/action_profileFragment_to_editprofileFragment"
             app:destination="@id/EditprofileFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_changePasswordFragment"
+            app:destination="@id/changePasswordFragment" />
     </fragment>
     <activity
         android:id="@+id/runningActivity"
@@ -44,6 +47,10 @@
         android:id="@+id/EditprofileFragment"
         android:name="com.example.otot.EditprofileFragment"
         android:label="Edit Profile" />
+    <fragment
+        android:id="@+id/changePasswordFragment"
+        android:name="com.example.otot.ChangePasswordFragment"
+        android:label="Change Password" />
 </navigation>
 
 
