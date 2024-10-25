@@ -10,7 +10,9 @@ Aplikasi OTOT adalah solusi inovatif bagi para pelari yang ingin meningkatkan ke
 - Rizky Ali Zamzami (00000079009) - [@ZammAja](https://github.com/ZammAja)
 - Fikri Naufal Andrasito (00000079229) - [@naufaland](https://github.com/naufaland)
 
+## Demo
 
+- [Video Demo App](https://youtu.be/cshu4EwcKtc?si=dr91rUX-ygFXRy4Y)
 
 ## Features
 
@@ -21,17 +23,12 @@ Fitur utama aplikasi ini meliputi:
 - Pencatatan Riwayat Lari: Menyimpan riwayat aktivitas lari pengguna untuk memudahkan pemantauan kemajuan dari waktu ke waktu.
 - Fitur Login: Memungkinkan pengguna untuk masuk menggunakan akun Google atau membuat akun baru dengan email, memastikan keamanan dan kemudahan akses ke data pribadi.
 
-
 ## Implemented Features
 
 Fitur-fitur yang sudah diimplementasikan:
 
 - Pelacakan Lokasi Terkini
 - Fitur Signup dan Login
-## Demo
-
-Insert gif or link to demo
-
 
 ## Initial Design
 
