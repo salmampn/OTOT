@@ -15,10 +15,12 @@ class PostRunningFragment : Fragment() {
             savedInstanceState: Bundle?
         ): View? {
             // Inflate the layout for this fragment
-            return inflater.inflate(R.layout.fragment_post_running, container, false)
+            val view = inflater.inflate(R.layout.fragment_post_running, container, false)
+            btnContinue = view.findViewById(R.id.continueButton)
             btnContinue.setOnClickListener{
                 findNavController().navigate(R.id.action_postRunningFragment_to_homeFragment)
             }
+            return view
         }
 
 }
