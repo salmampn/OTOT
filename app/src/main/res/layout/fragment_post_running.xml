@@ -1,20 +1,18 @@
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PostRunningFragment">
 
-    <ImageView
+    <com.google.android.gms.maps.MapView
         android:id="@+id/routeMapImage"
         android:layout_width="0dp"
         android:layout_height="200dp"
-        android:clipToOutline="true"
         android:layout_marginTop="16dp"
+        android:clipToOutline="true"
         android:foreground="@drawable/image_border"
         android:scaleType="centerCrop"
-        android:src="@drawable/map1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -25,35 +23,35 @@
         android:id="@+id/congratulationsTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:text="Congratulations"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/routeMapImage"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="10dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/routeMapImage" />
 
     <TextView
         android:id="@+id/congratulationsSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:text="for your excellent performance during this session."
         android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@id/congratulationsTitle"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="16dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/congratulationsTitle" />
 
     <View
         android:id="@+id/view"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/red"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/congratulationsSubtitle"
-        app:layout_constraintWidth_percent="0.9"
-        android:layout_width="0dp"
-        android:layout_marginTop="8dp"
-        android:layout_height="1dp"
-        android:background="@color/red" />
+        app:layout_constraintWidth_percent="0.9" />
 
     <LinearLayout
         android:id="@+id/statsLayout"
@@ -190,7 +188,7 @@
                     android:id="@+id/avgPaceValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="3:19/km"
+                    android:text="3.19 km/min"
                     android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -272,9 +270,9 @@
         android:textAllCaps="false"
         android:textColor="@android:color/black"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/statsLayout"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/statsLayout"
         app:layout_constraintWidth_percent="0.9" />
 
     <Button
@@ -287,9 +285,9 @@
         android:textAllCaps="false"
         android:textColor="@android:color/black"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/viewAnalysisButton"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewAnalysisButton"
         app:layout_constraintWidth_percent="0.9" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
