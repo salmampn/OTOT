@@ -12,6 +12,7 @@ import android.os.Handler
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.navigation.fragment.findNavController
@@ -36,7 +37,7 @@ class PauseRunningFragment : Fragment() {
     private val pathPoints = mutableListOf<LatLng>()
     private var tracking = true
     private val LOCATION_PERMISSION_REQUEST_CODE = 1001
-
+    private lateinit var btnPause: ImageButton
     private lateinit var btnFinish: Button
     private lateinit var tvTime: TextView
     private lateinit var tvDistance2: TextView
@@ -75,6 +76,7 @@ class PauseRunningFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_pause_running, container, false)
         btnFinish = view.findViewById(R.id.btnFinish)
+        btnPause = view.findViewById(R.id.btnPause)
         tvTime = view.findViewById(R.id.tvTime)
         tvDistance2 = view.findViewById(R.id.tvDistance2)
         tvAvgPace2 = view.findViewById(R.id.tvAvgPace2)
@@ -99,6 +101,10 @@ class PauseRunningFragment : Fragment() {
                 R.id.action_pauseRunningFragment_to_postRunningFragment,
                 bundle
             )
+        }
+
+        btnPause.setOnClickListener {
+            togglePause()
         }
         return view
     }
@@ -145,6 +151,17 @@ class PauseRunningFragment : Fragment() {
                 }
             }
         }, Looper.getMainLooper())
+    }
+
+    private fun togglePause() {
+        if (tracking) {
+            tracking = false
+            btnPause.setImageResource(R.drawable.play_button)
+        } else {
+            tracking = true
+            btnPause.setImageResource(R.drawable.pause_button)
+            handler.post(runnable)
+        }
     }
 
     private fun saveRunData(): String {
