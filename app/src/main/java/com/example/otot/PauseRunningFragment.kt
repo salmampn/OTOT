@@ -176,6 +176,7 @@ class PauseRunningFragment : Fragment() {
             },
             "distance" to calculateDistance(),
             "avgPace" to calculateAveragePace(),
+            "timestamp" to System.currentTimeMillis()
         )
         FirebaseFirestore.getInstance().collection("runs").document(runId).set(runData)
         return runId
