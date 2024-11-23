@@ -168,6 +168,8 @@ class PauseRunningFragment : Fragment() {
         val duration = tvTime.text
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return ""
         val runId = FirebaseFirestore.getInstance().collection("runs").document().id
+        val timestamp = com.google.firebase.Timestamp.now()
+
         val runData = mapOf(
             "userId" to userId,
             "duration" to duration,
@@ -176,11 +178,12 @@ class PauseRunningFragment : Fragment() {
             },
             "distance" to calculateDistance(),
             "avgPace" to calculateAveragePace(),
-            "timestamp" to System.currentTimeMillis()
+            "timestamp" to timestamp
         )
         FirebaseFirestore.getInstance().collection("runs").document(runId).set(runData)
         return runId
     }
+
 
     private fun calculateDistance(): Double {
         var distance = 0.0

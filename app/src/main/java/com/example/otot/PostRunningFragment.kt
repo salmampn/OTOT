@@ -2,6 +2,7 @@ package com.example.otot
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -59,26 +60,47 @@ class PostRunningFragment : Fragment() {
         val db = FirebaseFirestore.getInstance()
         db.collection("runs").document(runId).get().addOnSuccessListener { document ->
             if (document != null) {
-                val pathPoints = document.get("pathPoints") as List<Map<String, Double>>
-                val polylineOptions = PolylineOptions().color(Color.RED).width(5f)
-                val boundsBuilder = LatLngBounds.Builder()
-                for (point in pathPoints) {
-                    val latLng = LatLng(point["lat"]!!, point["lng"]!!)
-                    polylineOptions.add(latLng)
-                    boundsBuilder.include(latLng)
+                val pathPoints = document.get("pathPoints") as? List<Map<String, Double>> ?: emptyList()
+                if (pathPoints.isNotEmpty()) {
+                    val polylineOptions = PolylineOptions().color(Color.RED).width(5f)
+                    val boundsBuilder = LatLngBounds.Builder()
+
+                    for (point in pathPoints) {
+                        val lat = point["lat"]
+                        val lng = point["lng"]
+                        if (lat != null && lng != null) {
+                            val latLng = LatLng(lat, lng)
+                            polylineOptions.add(latLng)
+                            boundsBuilder.include(latLng)
+                        }
+                    }
+
+                    if (polylineOptions.points.isNotEmpty()) {
+                        googleMap.addPolyline(polylineOptions)
+                        val bounds = boundsBuilder.build()
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+                    }
                 }
-                googleMap.addPolyline(polylineOptions)
-                val bounds = boundsBuilder.build()
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+
                 val distance = document.getDouble("distance") ?: 0.0
-                val avgPace = document.get("avgPace")?.toString() ?: "0.00/km"
+                val avgPaceStr = document.get("avgPace")?.toString() ?: "0.00"
                 val movingTime = document.getString("duration") ?: "00:00:00"
+
+                val avgPace = try {
+                    avgPaceStr.toDouble()
+                } catch (e: NumberFormatException) {
+                    0.0
+                }
+
                 distanceValue.text = String.format("%.1f km", distance)
-                avgPaceValue.text = String.format("%.1f km/min", avgPace.toDouble())
+                avgPaceValue.text = String.format("%.1f km/min", avgPace)
                 movingTimeValue.text = movingTime
             }
+        }.addOnFailureListener { exception ->
+            Log.e("drawRunPath", "Error fetching document: ${exception.message}")
         }
     }
+
 
     override fun onResume() {
         super.onResume()
