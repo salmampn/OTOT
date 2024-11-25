@@ -16,8 +16,10 @@ import com.google.android.gms.maps.model.PolylineOptions
 import java.text.SimpleDateFormat
 import java.util.*
 
-class HistoryAdapter(private val historyList: List<HistoryModel>) :
-    RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
+class HistoryAdapter(
+    private val historyList: MutableList<HistoryModel>, // Ubah menjadi MutableList
+    private val onDeleteClick: (Int) -> Unit // Tambahkan parameter untuk listener
+) : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
 
     inner class HistoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val avgPaceTextView: TextView = itemView.findViewById(R.id.text_avg_pace_value)
@@ -25,21 +27,25 @@ class HistoryAdapter(private val historyList: List<HistoryModel>) :
         private val durationTextView: TextView = itemView.findViewById(R.id.text_moving_time_value)
         private val timestampTextView: TextView = itemView.findViewById(R.id.text_date)
         private val mapView: MapView = itemView.findViewById(R.id.routeMapImage)
+        private val deleteButton: TextView = itemView.findViewById(R.id.button_delete)
 
-        fun bind(history: HistoryModel) {
+        fun bind(history: HistoryModel, position: Int) {
             avgPaceTextView.text = String.format("%.2f min/km", history.avgPace)
             distanceTextView.text = String.format("%.2f km", history.distance)
             durationTextView.text = history.movingTime
             val dateFormat = SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault())
             timestampTextView.text = dateFormat.format(history.getTimestampAsDate())
 
-            // MapView initialization and map drawing
             mapView.onCreate(null)
             mapView.getMapAsync { map ->
                 map.uiSettings.setAllGesturesEnabled(false)
                 drawPathOnMap(map, history.getPathPointsAsLatLng())
             }
             mapView.onResume()
+
+            deleteButton.setOnClickListener {
+                onDeleteClick(position)
+            }
         }
 
         private fun drawPathOnMap(map: GoogleMap, pathPoints: List<LatLng>) {
@@ -72,7 +78,7 @@ class HistoryAdapter(private val historyList: List<HistoryModel>) :
     }
 
     override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {
-        holder.bind(historyList[position])
+        holder.bind(historyList[position], position) // Pass position to bind
     }
 
     override fun getItemCount(): Int = historyList.size
@@ -81,5 +87,11 @@ class HistoryAdapter(private val historyList: List<HistoryModel>) :
         for (i in 0 until itemCount) {
             (historyList[i] as? HistoryViewHolder)?.handleMapLifecycle(event)
         }
+    }
+
+    fun removeItem(position: Int) {
+        historyList.removeAt(position)
+        notifyItemRemoved(position)
+        notifyItemRangeChanged(position, historyList.size)
     }
 }
