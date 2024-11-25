@@ -21,7 +21,6 @@ data class HistoryModel(
         }
     }
 
-    // Konversi Timestamp ke Date
     fun getTimestampAsDate(): Date {
         return timestamp.toDate()
     }
