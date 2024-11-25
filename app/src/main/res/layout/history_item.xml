@@ -23,14 +23,14 @@
             android:layout_gravity="center"
             android:paddingBottom="8dp"
             android:textColor="@android:color/black"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <com.google.android.gms.maps.MapView
             android:id="@+id/routeMapImage"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
             android:clipToOutline="true"
             android:foreground="@drawable/image_border"
             android:scaleType="centerCrop" />
@@ -55,15 +55,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Distance"
+                    android:layout_marginTop="10dp"
                     android:textColor="@color/red"
-                    android:textSize="12sp" />
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/text_distance_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="4dp"
-                    android:textSize="16sp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <!-- Moving Time Text -->
@@ -73,14 +74,14 @@
                     android:layout_height="wrap_content"
                     android:text="Moving Time"
                     android:textColor="@color/red"
-                    android:textSize="12sp" />
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/text_moving_time_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="4dp"
-                    android:textSize="16sp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -97,15 +98,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Avg Pace"
+                    android:layout_marginTop="10dp"
                     android:textColor="@color/red"
-                    android:textSize="12sp" />
-
+                    android:textSize="18sp" />
                 <TextView
                     android:id="@+id/text_avg_pace_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="4dp"
-                    android:textSize="16sp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
