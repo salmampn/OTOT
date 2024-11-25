@@ -2,9 +2,12 @@ package com.example.otot
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +18,7 @@ import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import java.io.ByteArrayOutputStream
 import java.util.*
 
 class EditprofileFragment : Fragment() {
@@ -22,12 +26,15 @@ class EditprofileFragment : Fragment() {
     private lateinit var etName: EditText
     private lateinit var etUsername: EditText
     private lateinit var spinnerGender: Spinner
-    private lateinit var btnSave: Button
+    private lateinit var btnSave: TextView
     private lateinit var profileImage: ImageView
 
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
     private val storage = FirebaseStorage.getInstance()
+
+    private lateinit var progressBar: ProgressBar
+    private lateinit var loadingOverlay: View
 
     private val PICK_IMAGE_REQUEST = 1
 
@@ -47,6 +54,10 @@ class EditprofileFragment : Fragment() {
         btnSave = view.findViewById(R.id.btn_save)
         profileImage = view.findViewById(R.id.profile_image)
 
+        // Initialize the ProgressBar and loading overlay
+        progressBar = view.findViewById(R.id.progressBar)
+        loadingOverlay = view.findViewById(R.id.loading_overlay)
+
         profileImage.setOnClickListener{
             openGallery()
         }
@@ -61,7 +72,6 @@ class EditprofileFragment : Fragment() {
                 etUsername.text.toString(),
                 spinnerGender.selectedItem.toString()
             )
-            findNavController().navigate(R.id.action_editprofileFragment_to_profileFragment)
         }
         return view
     }
@@ -82,6 +92,8 @@ class EditprofileFragment : Fragment() {
 
                         // Load profile image if it exists
                         existingImageUrl = document.getString("profileImageUrl")
+
+                        Log.e("ExistingImageUrl: $existingImageUrl", "user: ${user.uid}")
                         if (!existingImageUrl.isNullOrEmpty()) {
                             Glide.with(this)
                                 .load(existingImageUrl)
@@ -128,6 +140,8 @@ class EditprofileFragment : Fragment() {
         if (currentUser != null) {
             if (imageUri != null) {
                 // If user selected an image, upload it
+                loadingOverlay.visibility = View.VISIBLE
+                progressBar.visibility = View.VISIBLE
                 uploadImageToStorage(name, username, selectedGender)
             } else {
                 // If no new image selected, save data with existing image URL
@@ -139,7 +153,23 @@ class EditprofileFragment : Fragment() {
     }
 
     private fun uploadImageToStorage(name: String, username: String, selectedGender: String) {
-        val storageRef = storage.reference.child("profile_pictures/${UUID.randomUUID()}.jpg")
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        Log.e("UploadImage", "User ID: $userId")
+        if (userId == null) {
+            Toast.makeText(requireContext(), "User not authenticated", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (imageUri == null) {
+            Toast.makeText(requireContext(), "No image selected", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Compress the image
+        val compressedImage = compressImage(imageUri!!)
+
+        // Use the userId in the path
+        val storageRef = storage.reference.child("profile_pictures/${userId}_profile.jpg")
 
         storageRef.putFile(imageUri!!)
             .addOnSuccessListener {
@@ -148,9 +178,35 @@ class EditprofileFragment : Fragment() {
                     saveProfileData(name, username, selectedGender, uri.toString())
                 }
             }
-            .addOnFailureListener {
-                Toast.makeText(requireContext(), "Failed to upload image", Toast.LENGTH_SHORT).show()
+            .addOnFailureListener { exception ->
+                Log.e("UploadImage", "Upload failed: ${exception.message}")
+                Toast.makeText(requireContext(), "Failed to upload image: ${exception.message}", Toast.LENGTH_SHORT).show()
+                loadingOverlay.visibility = View.GONE
+                progressBar.visibility = View.GONE
             }
+    }
+
+    private fun compressImage(uri: Uri): ByteArray {
+        // Decode the image to a Bitmap
+        val originalBitmap = BitmapFactory.decodeStream(imageUri?.let {
+            requireContext().contentResolver.openInputStream(
+                it
+            )
+        })
+
+        // Set the initial quality
+        var quality = 100
+        var stream = ByteArrayOutputStream()
+        originalBitmap.compress(Bitmap.CompressFormat.JPEG, quality, stream)
+
+        // Check the size and compress if necessary
+        while (stream.toByteArray().size > 500 * 1024 && quality > 50) { // 300 KB
+            stream.reset() // Reset the stream
+            quality -= 50 // Decrease quality
+            originalBitmap.compress(Bitmap.CompressFormat.JPEG, quality, stream)
+        }
+
+        return stream.toByteArray() // Return the compressed image as ByteArray
     }
 
     private fun saveProfileData(name: String, username: String, selectedGender: String, imageUrl: String?) {
@@ -168,9 +224,12 @@ class EditprofileFragment : Fragment() {
                 .set(profileData)
                 .addOnSuccessListener {
                     Toast.makeText(requireContext(), "Profile saved successfully", Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(R.id.action_editprofileFragment_to_profileFragment)
                 }
                 .addOnFailureListener { e ->
                     Toast.makeText(requireContext(), "Failed to save profile: ${e.message}", Toast.LENGTH_SHORT).show()
+                    loadingOverlay.visibility = View.GONE
+                    progressBar.visibility = View.GONE
                 }
         }
     }

@@ -6,10 +6,10 @@
     <string name="get_started_logo">Get Started Logo</string>
     <string name="let_s_get_started">Let\'s Get Started</string>
     <string name="get_started_slogan">Your all-in-one sports companion.\nTrack, set goals, and connect.\nLet the journey begin.</string>
-    <string name="signup">Signup</string>
+    <string name="signup">Sign Up</string>
     <string name="if_you_already_have_an_account">If you already have an account</string>
     <string name="login">Login</string>
-    <string name="greeting">Hi, Welcome Back!</string>
+    <string name="greeting">Hi! Welcome Back</string>
     <string name="sub_greeting">Hello again, you\'ve been missed</string>
     <string name="google_login">Please Login with Google Below</string>
     <string name="don_t_have_an_account">Don\'t have an account?</string>

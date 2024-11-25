@@ -43,14 +43,7 @@ class MainActivity : AppCompatActivity() {
         windowInsetsController.isAppearanceLightStatusBars = false
 
         // Check if the user is logged in
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        if (currentUser == null) {
-            // User is not logged in, redirect to AuthActivity
-            val intent = Intent(this, SplashActivity::class.java)
-            startActivity(intent)
-            finish()
-            return
-        }
+        checkUserAuthentication()
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -115,6 +108,17 @@ class MainActivity : AppCompatActivity() {
                 R.id.historyFragment -> updateBottomNavIcons(R.drawable.inactive_home, R.drawable.inactive_track, R.drawable.history, R.drawable.inactive_profile)
                 R.id.profileFragment -> updateBottomNavIcons(R.drawable.inactive_home, R.drawable.inactive_track, R.drawable.inactive_history, R.drawable.profile)
             }
+        }
+    }
+
+    private fun checkUserAuthentication() {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser == null) {
+            // User is not logged in, redirect to SplashActivity or AuthActivity
+            val intent = Intent(this, SplashActivity::class.java) // Replace with your login activity
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish() // Optional: finish the current activity
         }
     }
 

@@ -21,10 +21,14 @@
         tools:layout="@layout/fragment_get_started">
         <action
             android:id="@+id/action_getStartedFragment_to_signupFragment"
-            app:destination="@id/signupFragment" />
+            app:destination="@id/signupFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"/>
         <action
             android:id="@+id/action_getStartedFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            app:destination="@id/loginFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"/>
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -33,10 +37,9 @@
         tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_loginFragment_to_signupFragment"
-            app:destination="@id/signupFragment" />
-        <action
-            android:id="@+id/action_loadingFragment_to_signupFragment"
-            app:destination="@id/signupFragment" />
+            app:destination="@id/signupFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"/>
     </fragment>
     <fragment
         android:id="@+id/signupFragment"
@@ -45,16 +48,23 @@
         tools:layout="@layout/fragment_signup">
         <action
             android:id="@+id/action_signupFragment_to_initProfileFragment"
-            app:destination="@id/initProfileFragment" />
+            app:destination="@id/initProfileFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"/>
         <action
             android:id="@+id/action_signupFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            app:destination="@id/loginFragment"
+            app:enterAnim="@anim/slide_out_right"
+            app:exitAnim="@anim/slide_in_left"/>
     </fragment>
     <fragment
         android:id="@+id/initProfileFragment"
         android:name="com.example.otot.InitProfileFragment"
         android:label="fragment_init_profile"
         tools:layout="@layout/fragment_init_profile">
+        <argument
+            android:name="imageUri"
+            app:argType="string" />
         <action
             android:id="@+id/action_initProfileFragment_to_loadingFragment"
             app:destination="@id/loadingFragment" />

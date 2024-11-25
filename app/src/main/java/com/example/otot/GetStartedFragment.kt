@@ -30,11 +30,21 @@ class GetStartedFragment : Fragment() {
 
         // Set up navigation for login button
         btnLogin.setOnClickListener {
+//            val transaction = requireActivity().supportFragmentManager.beginTransaction()
+//            transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left)
+//            transaction.replace(R.id.nav_host_fragment_splash, LoginFragment())
+//            transaction.addToBackStack(null)
+//            transaction.commit()
             findNavController().navigate(R.id.action_getStartedFragment_to_loginFragment)
         }
 
         // Set up navigation for signup button
         btnSignUp.setOnClickListener {
+//            val transaction = requireActivity().supportFragmentManager.beginTransaction()
+//            transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left)
+//            transaction.replace(R.id.nav_host_fragment_splash, SignupFragment())
+//            transaction.addToBackStack(null)
+//            transaction.commit()
             findNavController().navigate(R.id.action_getStartedFragment_to_signupFragment)
         }
 
