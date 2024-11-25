@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/confirmation_background"
+    android:layout_gravity="center">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:fontFamily="@font/roboto_bold"
+        android:layout_gravity="center"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Please enter your password to confirm."
+        android:layout_gravity="start"
+        android:layout_marginBottom="0dp"
+        android:textSize="16dp"
+        android:textColor="@color/white_80_percent"/>
+
+    <EditText
+        android:id="@+id/password_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:background="@drawable/auth_form"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white_semi_transparent"/>
+
+    <Button
+        android:id="@+id/btn_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="@font/roboto_bold"
+        android:textAllCaps="false"
+        android:textSize="16sp"
+        android:text="Delete This Account"
+        android:background="@drawable/confirm_button"
+        android:textColor="@color/white" />
+</LinearLayout>

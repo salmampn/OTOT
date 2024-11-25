@@ -13,6 +13,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -26,7 +27,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 class LoginFragment : Fragment() {
 
     private lateinit var btnSignUp : TextView
-    private lateinit var btnLogin : Button
+    private lateinit var btnLogin : TextView
     private lateinit var btnLoginGoogle : LinearLayout
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var firebaseAuth: FirebaseAuth
@@ -96,12 +97,8 @@ class LoginFragment : Fragment() {
                     requireActivity().finish()
                 } else {
                     // If sign in fails, display a message to the user.
-                    Toast.makeText(requireContext(), "Authentication failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "There's no account found", Toast.LENGTH_SHORT).show()
                 }
-            }
-            .addOnFailureListener { e ->
-                // Handle error (e.g., wrong credentials, network error)
-                Toast.makeText(requireContext(), "Authentication failed: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 

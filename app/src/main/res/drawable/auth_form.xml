@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background layer (transparent) -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" />
+        </shape>
+    </item>
+
+    <!-- Underline layer -->
+    <item android:top="40dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/white" /> <!-- Change this to your desired underline color -->
+            <size android:height="1dp" /> <!-- Height of the underline -->
+        </shape>
+    </item>
+</layer-list>

@@ -13,9 +13,9 @@
     <!-- Logo -->
     <ImageView
         android:id="@+id/splash_logo"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginTop="32dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="48dp"
         android:contentDescription="@string/splash_logo"
         android:src="@drawable/splash_logo"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,14 +23,11 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Greeting Text -->
-
-    <!-- Sub Greeting Text -->
-
     <TextView
         android:id="@+id/greeting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="@font/roboto_medium"
         android:text="@string/personalized"
         android:textColor="@color/white"
@@ -40,183 +37,173 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/splash_logo" />
 
+    <!-- Sub Greeting Text -->
+
+    <!-- Personalized Box -->
+
     <TextView
         android:id="@+id/sub_greeting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="4dp"
         android:fontFamily="@font/roboto_regular"
         android:text="@string/sub_personalized"
         android:textColor="@color/white"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintHorizontal_bias="0.118"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/greeting" />
 
-    <!-- Personalized Box -->
-    <androidx.cardview.widget.CardView
+    <LinearLayout
         android:id="@+id/personalized_box"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/rounded_corner"
-        app:cardBackgroundColor="@android:color/transparent"
-        app:cardCornerRadius="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginHorizontal="16dp"
+        android:background="@drawable/translucent_card"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sub_greeting"
         app:layout_constraintWidth_default="percent"
-        app:layout_constraintWidth_percent="0.85">
+        app:layout_constraintWidth_percent="0.85"
+        android:paddingVertical="32dp"
+        android:paddingHorizontal="20dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/rounded_corner"
-            android:orientation="vertical"
-            android:paddingHorizontal="40dp"
-            android:paddingVertical="32dp">
+        <!-- Profile Image -->
+        <FrameLayout
+            android:id="@+id/profile_image_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp">
 
-            <!-- Profile Image -->
-            <FrameLayout
-                android:id="@+id/profile_image_container"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <!-- Background border circle -->
+            <ImageView
+                android:layout_width="124dp"
+                android:layout_height="124dp"
+                android:src="@drawable/circle_profile" />
+
+            <!-- Profile image inside the border -->
+            <ImageView
+                android:id="@+id/profile_image"
+                android:layout_width="114dp"
+                android:layout_height="114dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0">
-
-                <!-- Background border circle -->
-                <ImageView
-                    android:layout_width="124dp"
-                    android:layout_height="124dp"
-                    android:src="@drawable/circle_profile"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0"/>
-
-                <!-- Profile image inside the border -->
-                <ImageView
-                    android:id="@+id/profile_image"
-                    android:layout_width="114dp"
-                    android:layout_height="114dp"
-                    android:layout_gravity="center"
-                    android:scaleType="centerCrop"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0"/>
-            </FrameLayout>
+                android:scaleType="centerCrop" />
 
             <ImageView
-                android:layout_width="31dp"
-                android:layout_height="38dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_marginStart="80dp"
-                android:layout_marginTop="7dp"
+                android:layout_marginTop="90dp"
                 android:layout_marginEnd="16dp"
-                android:src="@drawable/photo_camera_white"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.533"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.221" />
+                android:src="@drawable/photo_camera_white" />
+        </FrameLayout>
 
-            <!-- Name Input -->
-            <TextView
-                android:id="@+id/name_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:text="Name"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@+id/profile_image_container" />
+        <!-- Name Input -->
+        <TextView
+            android:id="@+id/name_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:fontFamily="@font/roboto_medium"/>
 
-            <EditText
-                android:id="@+id/name_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/rounded_corner_white_red"
-                android:hint="Name"
-                android:inputType="textPersonName"
-                android:padding="12dp"
-                android:textColor="@color/black"
-                app:layout_constraintTop_toBottomOf="@+id/name_label" />
+        <EditText
+            android:id="@+id/name_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Your Name"
+            android:background="@drawable/profile_form"
+            android:inputType="text"
+            android:textColor="@color/black_font"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="10dp"
+            android:textColorHint="@color/black_semi_transparent" />
 
-            <!-- Username Input-->
-            <TextView
-                android:id="@+id/username_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="16dp"
-                android:text="Username"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@+id/name_input" />
+        <!-- Username Input-->
+        <TextView
+            android:id="@+id/username_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Username"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:fontFamily="@font/roboto_medium" />
 
-            <EditText
-                android:id="@+id/username_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/rounded_corner_white_red"
-                android:hint="Username"
-                android:inputType="textNoSuggestions"
-                android:padding="12dp"
-                android:textColor="@color/black"
-                app:layout_constraintTop_toBottomOf="@+id/username_label" />
+        <EditText
+            android:id="@+id/username_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="username"
+            android:background="@drawable/profile_form"
+            android:inputType="text"
+            android:textColor="@color/black_font"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="10dp"
+            android:textColorHint="@color/black_semi_transparent" />
 
-            <!-- Gender Input-->
-            <TextView
-                android:id="@+id/gender_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Gender"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@+id/username_input" />
+        <!-- Gender Input-->
+        <TextView
+            android:id="@+id/gender_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Gender"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:fontFamily="@font/roboto_medium" />
 
-            <Spinner
-                android:id="@+id/gender_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/rounded_corner_white_red"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="12dp"
-                android:spinnerMode="dropdown"
-                android:textColor="@color/black"
-                app:layout_constraintTop_toBottomOf="@+id/gender_label" />
+        <Spinner
+            android:id="@+id/gender_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/profile_form"
+            android:textColor="@color/black_font"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="10dp"
+            android:textColorHint="@color/black_semi_transparent"
+            android:spinnerMode="dropdown" />
 
-            <!-- Continue Button -->
-            <Button
-                android:id="@+id/btnContinue"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:background="@drawable/rounded_corner_yellow"
-                android:backgroundTint="@color/yellow"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="8dp"
-                android:text="Continue"
-                android:textColor="@color/black"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/gender_spinner"
-                tools:layout_editor_absoluteX="40dp" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
+        <!-- Continue Button -->
+        <TextView
+            android:id="@+id/btnContinue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/auth_button"
+            android:backgroundTint="@color/yellow"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:padding="12dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="Continue"
+            android:textColor="@color/black" />
+    </LinearLayout>
+
+    <!-- Loading Screen -->
+    <View
+        android:id="@+id/loading_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone"/>
+
+    <!-- Loading ProgressBar -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

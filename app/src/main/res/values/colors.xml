@@ -5,4 +5,11 @@
     <color name="yellow">#FFD93D</color>
     <color name="red">#D70000</color>
     <color name="gray">#BDBFC0</color>
+    <color name="light_gray">#E0E0E0</color>
+    <color name="dark_gray">#A9A9A9</color>
+    <color name="black_font">#2A2828</color>
+    <color name="white_80_percent">#CCFFFFFF</color> <!--    80% white-->
+    <color name="white_semi_transparent">#80FFFFFF</color> <!--    50% transparent white-->
+    <color name="black_semi_transparent">#80000000</color> <!--    50% transparent black-->
+    <color name="red_semi_transparent">#80D70000</color> <!--    50% transparent red-->
 </resources>

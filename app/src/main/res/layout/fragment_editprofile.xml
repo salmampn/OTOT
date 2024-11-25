@@ -1,139 +1,154 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f5f5f5"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:background="#f5f5f5">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="32dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <!-- Profile Image -->
-        <FrameLayout
-            android:id="@+id/profile_image_container"
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="4dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="#FFFFFF"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:background="@drawable/card_background"
+                android:orientation="horizontal"
+                android:paddingVertical="24dp"
+                android:paddingStart="8dp">
+
+                    <!-- Profile Image -->
+                    <FrameLayout
+                        android:id="@+id/profile_image_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center">
+
+                        <!-- Background border circle -->
+                        <ImageView
+                            android:layout_width="96dp"
+                            android:layout_height="96dp"
+                            android:src="@drawable/circle_profile"
+                            android:layout_gravity="center" />
+
+                        <!-- Profile image inside the border -->
+                        <ImageView
+                            android:id="@+id/profile_image"
+                            android:layout_width="86dp"
+                            android:layout_height="86dp"
+                            android:layout_gravity="center"
+                            android:scaleType="centerCrop" />
+                    </FrameLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:layout_marginStart="16dp"
+                    android:layout_gravity="center"
+                    android:text="Choose a profile picture to personalize your account."/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0">
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:text="Profile name"
+            android:fontFamily="@font/roboto_medium"/>
 
-            <!-- Background border circle -->
-            <ImageView
-                android:layout_width="124dp"
-                android:layout_height="124dp"
-                android:src="@drawable/circle_edit_profile"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0"/>
+        <EditText
+            android:id="@+id/et_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/edit_profile_form"
+            android:hint="Latin alphabet, no emoji or symbols"
+            android:textColor="@color/black"
+            android:inputType="textPersonName" />
 
-            <!-- Profile image inside the border -->
-            <ImageView
-                android:id="@+id/profile_image"
-                android:layout_width="114dp"
-                android:layout_height="114dp"
-                android:layout_gravity="center"
-                android:scaleType="centerCrop"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0"/>
-        </FrameLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_marginTop="32dp"
+            android:text="Username"
+            android:fontFamily="@font/roboto_medium"/>
 
-        <ImageView
-            android:layout_width="29dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="80dp"
-            android:layout_marginTop="7dp"
-            android:layout_marginEnd="16dp"
-            android:src="@drawable/photo_camera_red"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <EditText
+            android:id="@+id/et_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/edit_profile_form"
+            android:hint="8-12 characters, no space" />
 
-    <TextView
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_marginTop="32dp"
+            android:text="Gender"
+            android:fontFamily="@font/roboto_medium"/>
+
+        <Spinner
+            android:id="@+id/spinner_gender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/edit_profile_form"
+            android:entries="@array/gender_options"
+            android:fontFamily="@font/roboto_bold"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/btn_save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:padding="12dp"
+            android:background="@drawable/auth_button"
+            android:text="Save Change"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Loading Screen -->
+    <View
+        android:id="@+id/loading_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone"/> <!-- Set to GONE by default -->
+
+    <!-- Loading ProgressBar -->
+    <ProgressBar
+        android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:text="Add/Change Profile Picture"
         android:layout_gravity="center"
-        android:textColor="@color/red"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_marginTop="16dp"
-        android:text="Name"/>
-
-    <EditText
-        android:id="@+id/et_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:background="@drawable/border_edittext"
-        android:hint="Name"
-        android:inputType="textPersonName"
-        android:padding="12dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_marginTop="16dp"
-        android:text="Username"/>
-
-    <EditText
-        android:id="@+id/et_username"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:background="@drawable/border_edittext"
-        android:hint="Username"
-        android:inputType="textPersonName"
-        android:padding="12dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_marginTop="16dp"
-        android:text="Gender"/>
-
-    <Spinner
-        android:id="@+id/spinner_gender"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="4dp"
-        android:background="@drawable/border_edittext"
-        android:entries="@array/gender_options"
-        android:padding="12dp" />
-
-    <Button
-        android:id="@+id/btn_save"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/rounded_corner_yellow"
-        android:text="Save Change"
-        android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-</LinearLayout>
+        android:visibility="gone"/> <!-- Set to GONE by default -->
+</FrameLayout>

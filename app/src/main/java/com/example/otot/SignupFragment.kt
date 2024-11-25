@@ -2,6 +2,7 @@ package com.example.otot
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,8 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.addCallback
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -20,10 +23,12 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.launch
 
 class SignupFragment : Fragment() {
 
-    private lateinit var btnSignup: Button
+    private lateinit var btnSignup: TextView
     private lateinit var btnLogin: TextView
     private lateinit var btnSignupGoogle : LinearLayout
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -68,6 +73,26 @@ class SignupFragment : Fragment() {
             val email = emailInput.text.toString()
             val password = passwordInput.text.toString()
 
+            // Validate input fields
+            if (email.isEmpty()) {
+                emailInput.error = "Email is required"
+                emailInput.requestFocus()
+                return@setOnClickListener
+            }
+
+            if (password.isEmpty()) {
+                passwordInput.error = "Password is required"
+                passwordInput.requestFocus()
+                return@setOnClickListener
+            }
+
+            // Validate password requirements
+            if (!isPasswordValid(password)) {
+                passwordInput.error = "Password must be 8-12 characters long, contain at least one digit and one uppercase letter."
+                passwordInput.requestFocus()
+                return@setOnClickListener
+            }
+
             // Create a new user with email and password
             firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(requireActivity()) { task ->
@@ -76,14 +101,15 @@ class SignupFragment : Fragment() {
                         val user = firebaseAuth.currentUser
                         Toast.makeText(requireContext(), "Sign up success", Toast.LENGTH_SHORT).show()
                         // Navigate to InitProfileFragment
-                        findNavController().navigate(R.id.action_signupFragment_to_initProfileFragment)
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            findNavController().navigate(R.id.action_signupFragment_to_initProfileFragment)
+                        }
                     } else {
                         // If sign up fails, display a message to the user.
                         Toast.makeText(requireContext(), "Sign up failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
         }
-
 
         // Set up navigation for login button
         btnLogin.setOnClickListener {
@@ -95,6 +121,26 @@ class SignupFragment : Fragment() {
         }
         return view
     }
+
+    // Function to validate password
+    private fun isPasswordValid(password: String): Boolean {
+        // Check password length
+        if (password.length < 8 || password.length > 12) {
+            return false
+        }
+
+        // Check for at least one digit
+        if (!password.any { it.isDigit() }) {
+            return false
+        }
+
+        // Check for at least one uppercase letter
+        if (!password.any { it.isUpperCase() }) {
+            return false
+        }
+        return true
+    }
+
     private fun signInWithGoogle() {
         val signInIntent = googleSignInClient.signInIntent
         startActivityForResult(signInIntent, RC_SIGN_IN)
@@ -125,18 +171,62 @@ class SignupFragment : Fragment() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     val user = firebaseAuth.currentUser
-                    // Navigate to InitProfileFragment
-                    findNavController().navigate(R.id.action_signupFragment_to_initProfileFragment)
-                    // Navigate to MainActivity
-//                    val intent = Intent(requireContext(), MainActivity::class.java)
-//                    startActivity(intent)
-//                    requireActivity().finish()
+                    // Check if the user already exists in Firestore
+                    checkIfUserExists(user?.uid, acct.displayName, acct.photoUrl.toString())
                 } else {
                     // If sign in fails, display a message to the user.
                     Toast.makeText(requireContext(), "Authentication failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }
             }
     }
+
+    private fun checkIfUserExists(userId: String?, displayName: String?, photoUrl: String?) {
+        if (userId != null) {
+            val firestore = FirebaseFirestore.getInstance()
+            firestore.collection("users").document(userId).get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        // User already exists, navigate to InitProfileFragment
+                        Toast.makeText(requireContext(), "Account already exists. Signing you in.", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(requireContext(), MainActivity::class.java)
+                        startActivity(intent)
+                        requireActivity().finish()
+                    } else {
+                        // User does not exist, save user information to Firestore
+                        saveUserToFirestore(userId, displayName, photoUrl)
+                        // Navigate to InitProfileFragment
+                        findNavController().navigate(R.id.action_signupFragment_to_initProfileFragment)
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e("Firestore", "Error checking user existence: ${e.message}")
+                    Toast.makeText(requireContext(), "Error checking user existence: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
+    private fun saveUserToFirestore(userId: String?, displayName: String?, photoUrl: String?) {
+        if (userId != null) {
+            val userMap = hashMapOf(
+                "name" to displayName,
+                "profileImageUrl" to photoUrl
+            )
+
+            // Get a reference to Firestore
+            val firestore = FirebaseFirestore.getInstance()
+
+            // Save user data to Firestore under the "users" collection
+            firestore.collection("users").document(userId)
+                .set(userMap)
+                .addOnSuccessListener {
+                    Log.d("Firestore", "User data saved successfully.")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("Firestore", "Error saving user data: ${e.message}")
+                }
+        }
+    }
+
     companion object {
         private const val RC_SIGN_IN = 9001
     }
