@@ -6,13 +6,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.otot.model.HistoryModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.Timestamp
 
 class HistoryFragment : Fragment() {
@@ -22,6 +23,7 @@ class HistoryFragment : Fragment() {
     private lateinit var firestore: FirebaseFirestore
     private val historyList = mutableListOf<HistoryModel>()
     private lateinit var auth: FirebaseAuth
+    private lateinit var emptyView: View
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,9 +42,16 @@ class HistoryFragment : Fragment() {
             redirectToSplash()
             return
         }
+
         recyclerView = view.findViewById(R.id.recyclerViewHistory)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        historyAdapter = HistoryAdapter(historyList)
+
+
+        emptyView = view.findViewById(R.id.empty_view)
+        historyAdapter = HistoryAdapter(historyList) { position ->
+            showDeleteConfirmationHistory(position)
+        }
+
         recyclerView.adapter = historyAdapter
         loadHistory()
     }
@@ -91,15 +100,51 @@ class HistoryFragment : Fragment() {
                         Toast.makeText(requireContext(), "Data error: ${e.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
-                historyAdapter.notifyDataSetChanged()
+                updateUI()
             }
             .addOnFailureListener { exception ->
                 Toast.makeText(requireContext(), "Error: ${exception.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
+    private fun updateUI() {
+        if (historyList.isEmpty()) {
+            recyclerView.visibility = View.GONE
+            emptyView.visibility = View.VISIBLE
+        } else {
+            recyclerView.visibility = View.VISIBLE
+            emptyView.visibility = View.GONE
+            historyAdapter.notifyDataSetChanged()
+        }
+    }
+    private fun showDeleteConfirmationHistory(position: Int) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_delete_history_confirmation, null)
+        val dialogBuilder = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
 
+        val dialog = dialogBuilder.create()
 
+        dialogView.findViewById<Button>(R.id.negative_button).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialogView.findViewById<Button>(R.id.positive_button).setOnClickListener {
+            val itemToDelete = historyList[position]
+            firestore.collection("runs").document(itemToDelete.runId)
+                .delete()
+                .addOnSuccessListener {
+                    historyAdapter.removeItem(position)
+                    updateUI()
+                    Toast.makeText(requireContext(), "History deleted", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
+                .addOnFailureListener { exception ->
+                    Toast.makeText(requireContext(), "Error deleting Data: ${exception.message}", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
+        }
+        dialog.show()
+    }
     override fun onResume() {
         super.onResume()
         historyAdapter.handleRecyclerViewLifecycle("resume")
