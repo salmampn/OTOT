@@ -28,12 +28,11 @@
             android:id="@+id/user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hello"
+            android:text=""
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_marginTop="16dp"
             android:textColor="@color/black" />
-
     </LinearLayout>
 
     <!-- Weekly Record Card -->
@@ -52,83 +51,85 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="24dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Your Weekly Record"
-                android:textSize="16sp"
+                android:text="Your Total Record"
+                android:textSize="24sp"
+                android:layout_marginBottom="10dp"
                 android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="16dp"
                 android:weightSum="3">
 
-                <!-- Steps Record -->
+                <!-- Total Distance Record -->
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                     <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:src="@drawable/ic_steps" />
+
                     <TextView
+                        android:id="@+id/totalDistanceTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="9,023 steps"
-                        android:textSize="14sp"
-                        android:layout_marginTop="4dp" />
+                        android:layout_marginTop="4dp"
+                        android:textSize="20sp" />
                 </LinearLayout>
-
-                <!-- Calories Record -->
+                <!-- Average Pace Record -->
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                     <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:src="@drawable/ic_calories" />
+
                     <TextView
+                        android:id="@+id/averagePaceTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="8,243 kcal"
-                        android:textSize="14sp"
-                        android:layout_marginTop="4dp" />
+                        android:layout_marginTop="4dp"
+                        android:textSize="20sp" />
                 </LinearLayout>
 
-                <!-- Time Record -->
+                <!-- Total Moving Time Record -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_weight="1"
                     android:gravity="center">
-
                     <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:src="@drawable/ic_time" />
                     <TextView
+                        android:id="@+id/movingTimeTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="27h 21m"
-                        android:textSize="14sp"
+                        android:textSize="20sp"
                         android:layout_marginTop="4dp" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
+
     </androidx.cardview.widget.CardView>
 
     <!-- Total Distance Card -->
