@@ -188,7 +188,7 @@
                     android:id="@+id/avgPaceValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="3.19 km/min"
+                    android:text="3.19 min/km"
                     android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>

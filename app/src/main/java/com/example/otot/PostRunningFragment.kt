@@ -93,7 +93,7 @@ class PostRunningFragment : Fragment() {
                 }
 
                 distanceValue.text = String.format("%.1f km", distance)
-                avgPaceValue.text = String.format("%.1f km/min", avgPace)
+                avgPaceValue.text = String.format("%.1f min/km", avgPace)
                 movingTimeValue.text = movingTime
             }
         }.addOnFailureListener { exception ->
