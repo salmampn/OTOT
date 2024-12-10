@@ -178,7 +178,8 @@ class PauseRunningFragment : Fragment() {
             },
             "distance" to calculateDistance(),
             "avgPace" to calculateAveragePace(),
-            "timestamp" to timestamp
+            "timestamp" to timestamp,
+            "calories" to calculateCalories()
         )
         FirebaseFirestore.getInstance().collection("runs").document(runId).set(runData)
         return runId
@@ -201,6 +202,10 @@ class PauseRunningFragment : Fragment() {
             distance += result[0]
         }
         return (distance / 1000.0) // Convert to kilometers
+    }
+    private fun calculateCalories(): Double {
+        val distance = calculateDistance()
+        return distance * 1.036
     }
 
     private fun calculateAveragePace(): Double {

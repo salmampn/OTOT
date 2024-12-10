@@ -27,12 +27,14 @@ class HistoryAdapter(
         private val durationTextView: TextView = itemView.findViewById(R.id.text_moving_time_value)
         private val timestampTextView: TextView = itemView.findViewById(R.id.text_date)
         private val mapView: MapView = itemView.findViewById(R.id.routeMapImage)
+        private val caloriesBurnedTextView: TextView = itemView.findViewById(R.id.text_calories_burned_value)
         private val deleteButton: TextView = itemView.findViewById(R.id.button_delete)
 
         fun bind(history: HistoryModel, position: Int) {
             avgPaceTextView.text = String.format("%.2f min/km", history.avgPace)
             distanceTextView.text = String.format("%.2f km", history.distance)
             durationTextView.text = history.movingTime
+            caloriesBurnedTextView.text = String.format("%.2f cal", history.caloriesBurned)
             val dateFormat = SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault())
             timestampTextView.text = dateFormat.format(history.getTimestampAsDate())
 

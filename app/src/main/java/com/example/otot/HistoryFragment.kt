@@ -2,6 +2,7 @@ package com.example.otot
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -73,7 +74,6 @@ class HistoryFragment : Fragment() {
                     try {
                         val date = document.getDate("timestamp")?.toString() ?: "Unknown Date"
                         val distance = document.getDouble("distance") ?: 0.0
-
                         val avgPaceString = document.get("avgPace")?.toString() ?: "0.00/km"
                         val avgPace = try {
                             avgPaceString.replace(Regex("[^0-9.]"), "").toDouble()
@@ -82,6 +82,7 @@ class HistoryFragment : Fragment() {
                         }
                         val movingTime = document.getString("duration") ?: "00:00:00"
                         val timestamp = document.getTimestamp("timestamp") ?: Timestamp.now()
+                        val calories = document.getDouble("calories") ?: 0.0
                         val runId = document.id
                         val pathPoints = document.get("pathPoints") as? List<Map<String, Double>> ?: emptyList()
 
@@ -93,7 +94,8 @@ class HistoryFragment : Fragment() {
                                 movingTime = movingTime,
                                 pathPoints = pathPoints,
                                 timestamp = timestamp,
-                                runId = runId
+                                runId = runId,
+                                caloriesBurned = calories
                             )
                         )
                     } catch (e: Exception) {
@@ -103,11 +105,12 @@ class HistoryFragment : Fragment() {
                 updateUI()
             }
             .addOnFailureListener { exception ->
+                Log.e("HomeFragment", "Error getting documents: ${exception.message}", exception) // Mencatat kesalahan ke log
                 Toast.makeText(requireContext(), "Error: ${exception.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
-    private fun updateUI() {
+        private fun updateUI() {
         if (historyList.isEmpty()) {
             recyclerView.visibility = View.GONE
             emptyView.visibility = View.VISIBLE
