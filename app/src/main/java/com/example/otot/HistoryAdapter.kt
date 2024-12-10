@@ -17,8 +17,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class HistoryAdapter(
-    private val historyList: MutableList<HistoryModel>, // Ubah menjadi MutableList
-    private val onDeleteClick: (Int) -> Unit // Tambahkan parameter untuk listener
+    private val historyList: MutableList<HistoryModel>,
+    private val onDeleteClick: (Int) -> Unit
 ) : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
 
     inner class HistoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
