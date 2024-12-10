@@ -8,7 +8,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.Manifest
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Handler
+import android.os.IBinder
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.Button
@@ -45,6 +50,8 @@ class PauseRunningFragment : Fragment() {
     private lateinit var runId: String
     private val handler = Handler(Looper.getMainLooper())
     private var seconds = 0
+    private var trackingService: TrackingService? = null
+    private var bound = false
     private val runnable = object : Runnable {
         override fun run() {
             val hours = seconds / 3600
@@ -64,9 +71,39 @@ class PauseRunningFragment : Fragment() {
         }
     }
 
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as TrackingService.LocalBinder
+            trackingService = binder.getService()
+            bound = true
+            handler.post(timerRunnable)
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            bound = false
+        }
+    }
+
+    private val timerRunnable = object : Runnable {
+        override fun run() {
+            trackingService?.let {
+                val seconds = it.getSeconds()
+                val hours = seconds / 3600
+                val minutes = (seconds % 3600) / 60
+                val secs = seconds % 60
+                val time = String.format("%02d:%02d:%02d", hours, minutes, secs)
+                tvTime.text = time
+                handler.postDelayed(this, 1000)
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        val serviceIntent = Intent(requireContext(), TrackingService::class.java)
+        requireContext().startService(serviceIntent)
+        requireContext().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
 
     override fun onCreateView(
@@ -225,6 +262,10 @@ class PauseRunningFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         mapView.onDestroy()
+        val serviceIntent = Intent(requireContext(), TrackingService::class.java)
+        requireContext().stopService(serviceIntent)
+        requireContext().unbindService(serviceConnection)
+        trackingService = null
     }
 
     override fun onLowMemory() {
