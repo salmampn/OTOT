@@ -57,8 +57,8 @@ class PauseRunningFragment : Fragment() {
             val hours = seconds / 3600
             val minutes = (seconds % 3600) / 60
             val secs = seconds % 60
-            val time = String.format("%02d:%02d:%02d", hours, minutes, secs)
-            tvTime.text = time
+//            val time = String.format("%02d:%02d:%02d", hours, minutes, secs)
+//            tvTime.text = time
 
             val distance = calculateDistance()
             tvDistance2.text = String.format("%.2f", distance)
@@ -134,6 +134,7 @@ class PauseRunningFragment : Fragment() {
                     runId
                 )
             }
+            trackingService?.stopTimer()
             findNavController().navigate(
                 R.id.action_pauseRunningFragment_to_postRunningFragment,
                 bundle
@@ -194,9 +195,11 @@ class PauseRunningFragment : Fragment() {
         if (tracking) {
             tracking = false
             btnPause.setImageResource(R.drawable.play_button)
+            trackingService?.pauseTimer()
         } else {
             tracking = true
             btnPause.setImageResource(R.drawable.pause_button)
+            trackingService?.startTimer()
             handler.post(runnable)
         }
     }
