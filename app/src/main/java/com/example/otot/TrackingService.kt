@@ -57,20 +57,23 @@ class TrackingService : Service() {
         return binder
     }
 
-    private fun startTimer() {
+    fun startTimer() {
         if (!running) {
-            startTime = SystemClock.elapsedRealtime()
-            handler.post(timerRunnable)
             running = true
+            handler.post(timerRunnable)
         }
     }
 
     private val timerRunnable = object : Runnable {
         override fun run() {
-            val elapsedMillis = SystemClock.elapsedRealtime() - startTime
-            seconds = (elapsedMillis / 1000).toInt()
+            seconds++
             handler.postDelayed(this, 1000)
         }
+    }
+
+    fun pauseTimer() {
+        handler.removeCallbacks(timerRunnable)
+        running = false
     }
 
     fun getSeconds(): Int {
@@ -78,6 +81,7 @@ class TrackingService : Service() {
     }
 
     fun stopTimer() {
+        seconds = 0
         handler.removeCallbacks(timerRunnable)
         running = false
     }
