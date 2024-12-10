@@ -65,7 +65,7 @@
                 android:id="@+id/tvAvgPace1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="AVG PACE (km/min)"
+                android:text="AVG PACE (min/km)"
                 android:textColor="#000"
                 android:textSize="16sp" />
 

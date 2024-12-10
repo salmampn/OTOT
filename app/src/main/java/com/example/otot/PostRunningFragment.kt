@@ -95,7 +95,7 @@ class PostRunningFragment : Fragment() {
                     0.0
                 }
                 distanceValue.text = String.format("%.1f km", distance)
-                avgPaceValue.text = String.format("%.1f km/min", avgPace)
+                avgPaceValue.text = String.format("%.1f min/km", avgPace)
                 movingTimeValue.text = movingTime
                 caloriesValue.text = String.format("%.1f cal", calories)
             }
