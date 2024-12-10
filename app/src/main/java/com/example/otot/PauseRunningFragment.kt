@@ -211,7 +211,7 @@ class PauseRunningFragment : Fragment() {
     private fun calculateAveragePace(): Double {
         val distance = calculateDistance() // in kilometers
         if (seconds == 0) return 0.0
-        val pace = distance / (seconds / 60.0) // kilometer per minutes
+        val pace = (seconds / 60.0) / distance // minute per kilometer
         return pace
     }
 
