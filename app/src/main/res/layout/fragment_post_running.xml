@@ -91,6 +91,7 @@
                     android:id="@+id/distanceValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="18.5 km"
                     android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -111,17 +112,18 @@
                 android:padding="8dp">
 
                 <TextView
-                    android:id="@+id/caloriesLabel"
+                    android:id="@+id/stepsLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Calories"
+                    android:text="Steps"
                     android:textColor="@color/red"
                     android:textSize="14sp" />
 
                 <TextView
-                    android:id="@+id/caloriesValue"
+                    android:id="@+id/stepsValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="7,389"
                     android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -154,6 +156,7 @@
                     android:id="@+id/movingTimeValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="1:17:05"
                     android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -185,6 +188,7 @@
                     android:id="@+id/avgPaceValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="3.19 min/km"
                     android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -196,8 +200,66 @@
             android:gravity="center"
             android:orientation="horizontal"
             android:weightSum="2">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/caloriesLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Calories"
+                    android:textColor="@color/red"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/caloriesValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="322 Kcal"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@color/gray" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/avgHeartRateLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Avg Heart Rate"
+                    android:textColor="@color/red"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/avgHeartRateValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="132 bpm"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+
     <Button
         android:id="@+id/viewAnalysisButton"
         android:layout_width="0dp"
