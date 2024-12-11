@@ -1,14 +1,17 @@
 package com.example.otot
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -36,6 +39,7 @@ class HomeFragment : Fragment() {
 
         loadUserProfile()
         loadUserRuns()
+        loadLastActivities()
 
         return view
     }
@@ -66,7 +70,6 @@ class HomeFragment : Fragment() {
                     var totalDistance = 0.0
                     var totalMovingTimeInSeconds = 0
                     var totalCalories = 0.0
-                    var count = 0
 
                     for (document in documents) {
                         val distance = document.getDouble("distance") ?: 0.0
@@ -76,7 +79,6 @@ class HomeFragment : Fragment() {
                         totalDistance += distance
                         totalMovingTimeInSeconds += duration.toSeconds()
                         totalCalories += calories
-                        count++
                     }
 
                     // Update UI
@@ -87,6 +89,45 @@ class HomeFragment : Fragment() {
                 .addOnFailureListener { exception ->
                     showToast("Failed to load runs: ${exception.message}")
                 }
+        }
+    }
+
+    private fun loadLastActivities() {
+        val currentUser = auth.currentUser
+        currentUser?.let { user ->
+            firestore.collection("runs")
+                .whereEqualTo("userId", user.uid)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .limit(5)
+                .get()
+                .addOnSuccessListener { documents ->
+                    val lastActivities = documents.map { document ->
+                        val distance = document.getDouble("distance") ?: 0.0
+                        val duration = document.getString("duration") ?: "00:00:00"
+                        LastActivity(distance, duration)
+                    }
+                    updateLastActivitiesUI(lastActivities)
+                }
+                .addOnFailureListener { exception ->
+                    showToast("Failed to load last activities: ${exception.message}")
+                    Log.e("HomeFragment", "Error loading last activities", exception)
+                }
+        }
+    }
+
+    private fun updateLastActivitiesUI(lastActivities: List<LastActivity>) {
+        val lastActivityContainer = view?.findViewById<LinearLayout>(R.id.last_activity_container)
+        lastActivityContainer?.removeAllViews()
+
+        lastActivities.forEach { activity ->
+            val activityView = LayoutInflater.from(context).inflate(R.layout.item_last_activity, lastActivityContainer, false)
+            val distanceTextView = activityView.findViewById<TextView>(R.id.distanceTextView)
+            val durationTextView = activityView.findViewById<TextView>(R.id.durationTextView)
+
+            distanceTextView.text = "${String.format("%.2f", activity.distance)} km"
+            durationTextView.text = activity.duration
+
+            lastActivityContainer?.addView(activityView)
         }
     }
 
@@ -105,4 +146,6 @@ class HomeFragment : Fragment() {
     private fun showToast(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
+
+    data class LastActivity(val distance: Double, val duration: String)
 }
