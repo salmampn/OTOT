@@ -92,6 +92,10 @@ class RunningActivity : AppCompatActivity(), OnMapReadyCallback {
         map = googleMap
         MapsInitializer.initialize(this)
 
+        // Enable zoom controls and gestures
+        map.uiSettings.isZoomControlsEnabled = true
+        map.uiSettings.isZoomGesturesEnabled = true
+
         // Check location permissions and enable location tracking
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
