@@ -73,7 +73,6 @@ class HistoryFragment : Fragment() {
                     try {
                         val date = document.getDate("timestamp")?.toString() ?: "Unknown Date"
                         val distance = document.getDouble("distance") ?: 0.0
-
                         val avgPaceString = document.get("avgPace")?.toString() ?: "0.00/km"
                         val avgPace = try {
                             avgPaceString.replace(Regex("[^0-9.]"), "").toDouble()
@@ -82,6 +81,7 @@ class HistoryFragment : Fragment() {
                         }
                         val movingTime = document.getString("duration") ?: "00:00:00"
                         val timestamp = document.getTimestamp("timestamp") ?: Timestamp.now()
+                        val calories = document.getDouble("calories") ?: 0.0
                         val runId = document.id
                         val pathPoints = document.get("pathPoints") as? List<Map<String, Double>> ?: emptyList()
 
@@ -93,6 +93,7 @@ class HistoryFragment : Fragment() {
                                 movingTime = movingTime,
                                 pathPoints = pathPoints,
                                 timestamp = timestamp,
+                                calories = calories,
                                 runId = runId
                             )
                         )
