@@ -75,7 +75,6 @@ class HomeFragment : Fragment() {
                         val distance = document.getDouble("distance") ?: 0.0
                         val duration = document.getString("duration") ?: "00:00:00"
                         val calories = document.getDouble("calories") ?: 0.0
-
                         totalDistance += distance
                         totalMovingTimeInSeconds += duration.toSeconds()
                         totalCalories += calories

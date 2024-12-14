@@ -4,19 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PauseRunningFragment">
+    tools:context=".StartRunningFragment">
 
     <!-- MapView -->
     <com.google.android.gms.maps.MapView
         android:id="@+id/mapView"
         android:layout_width="0dp"
-        android:layout_height="320sp"
+        android:layout_height="360dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- TextView for Statistics (Distance, Average Pace) -->
+    <!-- TextView for Statistics (Distance, Average Pace, Calories) -->
     <LinearLayout
         android:id="@+id/Stats"
         android:layout_width="0dp"
@@ -68,7 +68,6 @@
                 android:text="AVG PACE (min/km)"
                 android:textColor="#000"
                 android:textSize="12sp" />
-
             <TextView
                 android:id="@+id/tvAvgPace2"
                 android:layout_width="wrap_content"
@@ -79,7 +78,7 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Heart Rate Section -->
+        <!-- Calories Section -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -88,15 +87,14 @@
             android:gravity="center_horizontal">
 
             <TextView
-                android:id="@+id/tvHeartRate1"
+                android:id="@+id/tvCalories1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="HEART RATE (bpm)"
+                android:text="CALORIES (cal)"
                 android:textColor="#000"
                 android:textSize="12sp" />
-
             <TextView
-                android:id="@+id/tvHeartRate2"
+                android:id="@+id/tvCalories2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="---"
@@ -146,4 +144,5 @@
                 android:textSize="20sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

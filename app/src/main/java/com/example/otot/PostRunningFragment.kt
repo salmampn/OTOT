@@ -26,6 +26,7 @@ class PostRunningFragment : Fragment() {
     private lateinit var distanceValue: TextView
     private lateinit var avgPaceValue: TextView
     private lateinit var movingTimeValue: TextView
+    private lateinit var caloriesValue: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,6 +54,7 @@ class PostRunningFragment : Fragment() {
         distanceValue = view.findViewById(R.id.distanceValue)
         avgPaceValue = view.findViewById(R.id.avgPaceValue)
         movingTimeValue = view.findViewById(R.id.movingTimeValue)
+        caloriesValue = view.findViewById(R.id.caloriesValue)
         return view
     }
 
@@ -85,14 +87,15 @@ class PostRunningFragment : Fragment() {
                 val distance = document.getDouble("distance") ?: 0.0
                 val avgPaceStr = document.get("avgPace")?.toString() ?: "0.00"
                 val movingTime = document.getString("duration") ?: "00:00:00"
+                val calories = document.getDouble("calories") ?: 0.0
 
                 val avgPace = try {
                     avgPaceStr.toDouble()
                 } catch (e: NumberFormatException) {
                     0.0
                 }
-
                 distanceValue.text = String.format("%.1f km", distance)
+                caloriesValue.text = String.format("%.1f cal", calories)
                 avgPaceValue.text = String.format("%.1f min/km", avgPace)
                 movingTimeValue.text = movingTime
             }

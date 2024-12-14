@@ -47,6 +47,7 @@ class PauseRunningFragment : Fragment() {
     private lateinit var tvTime: TextView
     private lateinit var tvDistance2: TextView
     private lateinit var tvAvgPace2: TextView
+    private lateinit var tvCalories2: TextView
     private lateinit var runId: String
     private val handler = Handler(Looper.getMainLooper())
     private var seconds = 0
@@ -64,6 +65,8 @@ class PauseRunningFragment : Fragment() {
             tvDistance2.text = String.format("%.2f", distance)
             val avgPace = calculateAveragePace()
             tvAvgPace2.text = String.format("%.2f", avgPace)
+            val calories = calculateCalories()
+            tvCalories2.text = String.format("%.2f", calories)
             if (tracking) {
                 seconds++
                 handler.postDelayed(this, 1000)
@@ -117,6 +120,7 @@ class PauseRunningFragment : Fragment() {
         tvTime = view.findViewById(R.id.tvTime)
         tvDistance2 = view.findViewById(R.id.tvDistance2)
         tvAvgPace2 = view.findViewById(R.id.tvAvgPace2)
+        tvCalories2 = view.findViewById(R.id.tvCalories2)
         mapView = view.findViewById(R.id.mapView)
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync { googleMap ->
@@ -218,6 +222,7 @@ class PauseRunningFragment : Fragment() {
             },
             "distance" to calculateDistance(),
             "avgPace" to calculateAveragePace(),
+            "calories" to calculateCalories(),
             "timestamp" to timestamp
         )
         FirebaseFirestore.getInstance().collection("runs").document(runId).set(runData)
@@ -241,6 +246,11 @@ class PauseRunningFragment : Fragment() {
             distance += result[0]
         }
         return (distance / 1000.0) // Convert to kilometers
+    }
+    private fun calculateCalories(): Double {
+        val distance = calculateDistance()
+        val caloriesPerKm = 65
+        return distance * caloriesPerKm
     }
 
     private fun calculateAveragePace(): Double {

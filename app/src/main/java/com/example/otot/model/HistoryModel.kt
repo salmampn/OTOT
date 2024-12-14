@@ -11,6 +11,7 @@ data class HistoryModel(
     var movingTime: String = "00:00:00",
     var pathPoints: List<Map<String, Double>> = emptyList(),
     var timestamp: Timestamp = Timestamp.now(),
+    var calories: Double = 0.0,
     var runId: String = ""
 ) {
     fun getPathPointsAsLatLng(): List<LatLng> {
