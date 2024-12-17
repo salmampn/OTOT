@@ -16,6 +16,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Camera Button -->
+    <ImageButton
+        android:id="@+id/btnCamera"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/circle_start"
+        android:src="@drawable/photo_camera_white"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="@id/mapView"
+        app:layout_constraintEnd_toEndOf="@id/mapView" />
+
     <!-- TextView for Statistics (Distance, Average Pace, Calories) -->
     <LinearLayout
         android:id="@+id/Stats"
@@ -127,7 +138,7 @@
                 android:id="@+id/tvTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="8dp"
                 android:fontFamily="@font/roboto_bold"
                 android:text="00:00:00"
                 android:textColor="#000"
@@ -138,7 +149,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center">
+                android:gravity="bottom"
+                android:layout_marginBottom="16dp">
 
                 <!-- Finish Button -->
                 <Button
@@ -156,7 +168,7 @@
                     android:id="@+id/btnPause"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="0dp"
                     android:background="@drawable/circle_pause"
                     android:src="@drawable/pause_button" />
             </LinearLayout>

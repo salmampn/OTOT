@@ -35,6 +35,9 @@
         <action
             android:id="@+id/action_historyFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_historyFragment_to_historyDetailFragment"
+            app:destination="@id/historyDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -73,9 +76,6 @@
         <action
             android:id="@+id/action_postRunningFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
-        <action
-            android:id="@+id/action_postRunningFragment_to_analysisFragment"
-            app:destination="@id/analysisFragment" />
     </fragment>
     <fragment
         android:id="@+id/startRunningFragment"
@@ -96,10 +96,13 @@
             app:destination="@id/postRunningFragment" />
     </fragment>
     <fragment
-        android:id="@+id/analysisFragment"
-        android:name="com.example.otot.AnalysisFragment"
-        android:label="Analysis"
-        tools:layout="@layout/fragment_analysis" />
+        android:id="@+id/historyDetailFragment"
+        android:name="com.example.otot.HistoryDetailFragment"
+        android:label="History Detail" >
+        <action
+            android:id="@+id/action_historyDetailFragment_to_historyFragment"
+            app:destination="@id/historyFragment" />
+    </fragment>
 </navigation>
 
 

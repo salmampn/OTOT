@@ -1,10 +1,13 @@
 package com.example.otot
 
 import android.graphics.Color
+import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.otot.model.HistoryModel
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -18,7 +21,8 @@ import java.util.*
 
 class HistoryAdapter(
     private val historyList: MutableList<HistoryModel>,
-    private val onDeleteClick: (Int) -> Unit
+    private val onDeleteClick: (Int) -> Unit,
+    private val navController: NavController // Add NavController parameter
 ) : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
 
     inner class HistoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -44,9 +48,21 @@ class HistoryAdapter(
                 drawPathOnMap(map, history.getPathPointsAsLatLng())
             }
             mapView.onResume()
-
             deleteButton.setOnClickListener {
                 onDeleteClick(position)
+            }
+
+            itemView.setOnClickListener {
+                try {
+                    // Create a bundle to pass the runId
+                    val bundle = Bundle().apply {
+                        putString("runId", history.runId) // Pass only the runId
+                    }
+                    // Use NavController to navigate to HistoryDetailFragment
+                    navController.navigate(R.id.action_historyFragment_to_historyDetailFragment, bundle)
+                } catch (e: Exception) {
+                    Log.e("HistoryAdapter", "Navigation error: ${e.message}")
+                }
             }
         }
 

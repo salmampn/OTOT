@@ -20,7 +20,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class PostRunningFragment : Fragment() {
     private lateinit var btnContinue: Button
-    private lateinit var btnViewAnalysis: Button
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
     private lateinit var distanceValue: TextView
@@ -42,10 +41,6 @@ class PostRunningFragment : Fragment() {
             googleMap.uiSettings.setAllGesturesEnabled(false)
             val runId = arguments?.getString("runId") ?: return@getMapAsync
             drawRunPath(runId)
-        }
-        btnViewAnalysis = view.findViewById(R.id.viewAnalysisButton)
-        btnViewAnalysis.setOnClickListener {
-            findNavController().navigate(R.id.action_postRunningFragment_to_analysisFragment)
         }
 
         btnContinue.setOnClickListener {
