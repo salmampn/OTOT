@@ -21,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:paddingBottom="8dp"
+            android:paddingBottom="6dp"
             android:textColor="@android:color/black"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -55,18 +55,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:layout_gravity="center"
+                    android:layout_gravity="left"
                     android:text="Distance"
                     android:textColor="@color/red"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/text_distance_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_gravity="left"
                     android:layout_marginTop="5dp"
-                    android:textSize="20sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <!-- Moving Time Text -->
@@ -74,19 +74,19 @@
                     android:id="@+id/text_moving_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_gravity="left"
                     android:layout_marginTop="5dp"
                     android:text="Moving Time"
                     android:textColor="@color/red"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/text_moving_time_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_gravity="left"
                     android:layout_marginTop="5dp"
-                    android:textSize="20sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -105,17 +105,17 @@
                     android:layout_height="wrap_content"
                     android:text="Avg Pace"
                     android:layout_marginTop="20dp"
-                    android:layout_gravity="center"
+                    android:layout_gravity="left"
                     android:textColor="@color/red"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/text_avg_pace_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_gravity="left"
                     android:layout_marginTop="5dp"
-                    android:textSize="20sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <!-- Calories Text -->
@@ -123,19 +123,19 @@
                     android:id="@+id/text_calories"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_gravity="left"
                     android:layout_marginTop="5dp"
                     android:text="Calories"
                     android:textColor="@color/red"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/text_calories_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_gravity="left"
                     android:layout_marginTop="5dp"
-                    android:textSize="20sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
@@ -146,7 +146,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:backgroundTint="@color/red"
+            android:layout_gravity="right"
+            android:background="@drawable/confirm_button"
+            android:fontFamily="@font/roboto_bold"
             android:text="Delete"
             android:textColor="@android:color/white" />
     </LinearLayout>

@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.otot.model.HistoryModel
@@ -24,6 +26,7 @@ class HistoryFragment : Fragment() {
     private val historyList = mutableListOf<HistoryModel>()
     private lateinit var auth: FirebaseAuth
     private lateinit var emptyView: View
+    private lateinit var navController: NavController // Declare NavController
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,6 +40,8 @@ class HistoryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
+        navController = findNavController()
+
         val currentUser = auth.currentUser
         if (currentUser == null) {
             redirectToSplash()
@@ -48,9 +53,9 @@ class HistoryFragment : Fragment() {
 
 
         emptyView = view.findViewById(R.id.empty_view)
-        historyAdapter = HistoryAdapter(historyList) { position ->
+        historyAdapter = HistoryAdapter(historyList, { position ->
             showDeleteConfirmationHistory(position)
-        }
+        }, navController) // Pass NavController to HistoryAdapter
 
         recyclerView.adapter = historyAdapter
         loadHistory()
@@ -101,6 +106,10 @@ class HistoryFragment : Fragment() {
                         Toast.makeText(requireContext(), "Data error: ${e.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
+
+                // Sort the historyList in descending order based on timestamp
+                historyList.sortByDescending { it.timestamp }
+
                 updateUI()
             }
             .addOnFailureListener { exception ->
@@ -145,7 +154,10 @@ class HistoryFragment : Fragment() {
                 }
         }
         dialog.show()
+        dialog.setCanceledOnTouchOutside(true) // Allow dialog to close when touching outside
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
+
     override fun onResume() {
         super.onResume()
         historyAdapter.handleRecyclerViewLifecycle("resume")

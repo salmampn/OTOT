@@ -1,7 +1,9 @@
 package com.example.otot
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
 import androidx.fragment.app.Fragment
@@ -10,10 +12,11 @@ import android.view.View
 import android.Manifest
 import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
 import android.content.ServiceConnection
+import android.graphics.Bitmap
 import android.os.Handler
 import android.os.IBinder
+import android.provider.MediaStore
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.Button
@@ -33,7 +36,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import org.w3c.dom.Text
 
 class PauseRunningFragment : Fragment() {
     private lateinit var mapView: MapView
@@ -44,6 +46,7 @@ class PauseRunningFragment : Fragment() {
     private val LOCATION_PERMISSION_REQUEST_CODE = 1001
     private lateinit var btnPause: ImageButton
     private lateinit var btnFinish: Button
+    private lateinit var btnCamera: ImageButton
     private lateinit var tvTime: TextView
     private lateinit var tvDistance2: TextView
     private lateinit var tvAvgPace2: TextView
@@ -53,6 +56,7 @@ class PauseRunningFragment : Fragment() {
     private var seconds = 0
     private var trackingService: TrackingService? = null
     private var bound = false
+
     private val runnable = object : Runnable {
         override fun run() {
             val hours = seconds / 3600
@@ -117,6 +121,7 @@ class PauseRunningFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_pause_running, container, false)
         btnFinish = view.findViewById(R.id.btnFinish)
         btnPause = view.findViewById(R.id.btnPause)
+        btnCamera = view.findViewById(R.id.btnCamera)
         tvTime = view.findViewById(R.id.tvTime)
         tvDistance2 = view.findViewById(R.id.tvDistance2)
         tvAvgPace2 = view.findViewById(R.id.tvAvgPace2)
@@ -133,10 +138,7 @@ class PauseRunningFragment : Fragment() {
             tracking = false
             runId = saveRunData()
             val bundle = Bundle().apply {
-                putString(
-                    "runId",
-                    runId
-                )
+                putString("runId", runId)
             }
             trackingService?.stopTimer()
             findNavController().navigate(
@@ -147,6 +149,10 @@ class PauseRunningFragment : Fragment() {
 
         btnPause.setOnClickListener {
             togglePause()
+        }
+
+        btnCamera.setOnClickListener {
+            openCamera()
         }
         return view
     }
@@ -204,7 +210,7 @@ class PauseRunningFragment : Fragment() {
             tracking = true
             btnPause.setImageResource(R.drawable.pause_button)
             trackingService?.startTimer()
-            handler.post(runnable)
+            handler.post(runnable) // Restart the timer when resuming
         }
     }
 
@@ -229,7 +235,6 @@ class PauseRunningFragment : Fragment() {
         return runId
     }
 
-
     private fun calculateDistance(): Double {
         var distance = 0.0
         for (i in 0 until pathPoints.size - 1) {
@@ -247,6 +252,7 @@ class PauseRunningFragment : Fragment() {
         }
         return (distance / 1000.0) // Convert to kilometers
     }
+
     private fun calculateCalories(): Double {
         val distance = calculateDistance()
         val caloriesPerKm = 65
@@ -258,6 +264,33 @@ class PauseRunningFragment : Fragment() {
         if (seconds == 0) return 0.0
         val pace = (seconds / 60.0) / distance // minute per kilometer
         return pace
+    }
+
+    private fun openCamera() {
+        // Check for camera permission
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            // Request camera permission
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.CAMERA),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+        } else {
+            // Launch the camera
+            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            if (cameraIntent.resolveActivity(requireActivity().packageManager) != null) {
+                startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE)
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == CAMERA_REQUEST_CODE && resultCode == -1) { // -1 is RESULT_OK
+            // Handle the image captured from the camera
+            val imageUri: Uri? = data?.data
+            // You can now use the imageUri (e.g., display it in an ImageView)
+        }
     }
 
     override fun onResume() {
@@ -284,5 +317,9 @@ class PauseRunningFragment : Fragment() {
     override fun onLowMemory() {
         super.onLowMemory()
         mapView.onLowMemory()
+    }
+
+    companion object {
+        private const val CAMERA_REQUEST_CODE = 1002
     }
 }

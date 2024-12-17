@@ -55,10 +55,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Set the back arrow (navigation icon) color to white
-        toolbar.navigationIcon?.setColorFilter(
-            ContextCompat.getColor(this, android.R.color.white),
-            PorterDuff.Mode.SRC_ATOP
-        )
+        setBackArrowColor(toolbar)
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
@@ -104,11 +101,31 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.homeFragment -> updateBottomNavIcons(R.drawable.home, R.drawable.inactive_track, R.drawable.inactive_history, R.drawable.inactive_profile)
-                R.id.startRunningFragment -> updateBottomNavIcons(R.drawable.inactive_home, R.drawable.track, R.drawable.inactive_history, R.drawable.inactive_profile)
+                R.id.startRunningFragment -> {
+                    updateBottomNavIcons(R.drawable.inactive_home, R.drawable.track, R.drawable.inactive_history, R.drawable.inactive_profile)
+                    supportActionBar?.setDisplayHomeAsUpEnabled(false) // Hide back arrow
+                }
+                R.id.pauseRunningFragment -> {
+                    updateBottomNavIcons(R.drawable.inactive_home, R.drawable.track, R.drawable.inactive_history, R.drawable.inactive_profile)
+                    supportActionBar?.setDisplayHomeAsUpEnabled(false) // Hide back arrow
+                }
+                R.id.postRunningFragment -> {
+                    updateBottomNavIcons(R.drawable.inactive_home, R.drawable.track, R.drawable.inactive_history, R.drawable.inactive_profile)
+                    supportActionBar?.setDisplayHomeAsUpEnabled(false) // Hide back arrow
+                }
                 R.id.historyFragment -> updateBottomNavIcons(R.drawable.inactive_home, R.drawable.inactive_track, R.drawable.history, R.drawable.inactive_profile)
                 R.id.profileFragment -> updateBottomNavIcons(R.drawable.inactive_home, R.drawable.inactive_track, R.drawable.inactive_history, R.drawable.profile)
             }
+            // Set the back arrow color to white for all fragments where it is displayed
+            setBackArrowColor(toolbar)
         }
+    }
+
+    private fun setBackArrowColor(toolbar: Toolbar) {
+        toolbar.navigationIcon?.setColorFilter(
+            ContextCompat.getColor(this, android.R.color.white),
+            PorterDuff.Mode.SRC_ATOP
+        )
     }
 
     private fun checkUserAuthentication() {
