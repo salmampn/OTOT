@@ -13,8 +13,11 @@ import com.example.otot.model.HistoryModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import java.text.SimpleDateFormat
 import java.util.*
@@ -44,7 +47,8 @@ class HistoryAdapter(
 
             mapView.onCreate(null)
             mapView.getMapAsync { map ->
-                map.uiSettings.setAllGesturesEnabled(false)
+                map.uiSettings.setAllGesturesEnabled(true)
+                map.uiSettings.setZoomGesturesEnabled(false)
                 drawPathOnMap(map, history.getPathPointsAsLatLng())
             }
             mapView.onResume()
@@ -59,7 +63,10 @@ class HistoryAdapter(
                         putString("runId", history.runId) // Pass only the runId
                     }
                     // Use NavController to navigate to HistoryDetailFragment
-                    navController.navigate(R.id.action_historyFragment_to_historyDetailFragment, bundle)
+                    navController.navigate(
+                        R.id.action_historyFragment_to_historyDetailFragment,
+                        bundle
+                    )
                 } catch (e: Exception) {
                     Log.e("HistoryAdapter", "Navigation error: ${e.message}")
                 }
@@ -77,6 +84,24 @@ class HistoryAdapter(
                 map.addPolyline(polylineOptions)
                 val bounds = boundsBuilder.build()
                 map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+
+                // Add start marker
+                val startLatLng = pathPoints.first()
+                map.addMarker(
+                    MarkerOptions()
+                        .position(startLatLng)
+                        .title("Start")
+                        .icon(getMarkerIcon(Color.parseColor("#F2801F")))
+                )
+
+                // Add end marker
+                val endLatLng = pathPoints.last()
+                map.addMarker(
+                    MarkerOptions()
+                        .position(endLatLng)
+                        .title("End")
+                        .icon(getMarkerIcon(Color.parseColor("#D70000")))
+                )
             }
         }
 
@@ -87,6 +112,12 @@ class HistoryAdapter(
                 "destroy" -> mapView.onDestroy()
             }
         }
+    }
+
+    private fun getMarkerIcon(color: Int): BitmapDescriptor {
+        val hsv = FloatArray(3)
+        Color.colorToHSV(color, hsv)
+        return BitmapDescriptorFactory.defaultMarker(hsv[0])
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {

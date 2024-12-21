@@ -13,8 +13,11 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -38,7 +41,8 @@ class PostRunningFragment : Fragment() {
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync { map ->
             googleMap = map
-            googleMap.uiSettings.setAllGesturesEnabled(false)
+            googleMap.uiSettings.setAllGesturesEnabled(true)
+            googleMap.uiSettings.setZoomGesturesEnabled(false)
             val runId = arguments?.getString("runId") ?: return@getMapAsync
             drawRunPath(runId)
         }
@@ -76,6 +80,24 @@ class PostRunningFragment : Fragment() {
                         googleMap.addPolyline(polylineOptions)
                         val bounds = boundsBuilder.build()
                         googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+
+                        // Add start marker
+                        val startLatLng = polylineOptions.points.first()
+                        googleMap.addMarker(
+                            MarkerOptions()
+                                .position(startLatLng)
+                                .title("Start")
+                                .icon(getMarkerIcon(Color.parseColor("#F2801F")))
+                        )
+
+                        // Add end marker
+                        val endLatLng = polylineOptions.points.last()
+                        googleMap.addMarker(
+                            MarkerOptions()
+                                .position(endLatLng)
+                                .title("End")
+                                .icon(getMarkerIcon(Color.parseColor("#D70000")))
+                        )
                     }
                 }
 
@@ -97,6 +119,12 @@ class PostRunningFragment : Fragment() {
         }.addOnFailureListener { exception ->
             Log.e("drawRunPath", "Error fetching document: ${exception.message}")
         }
+    }
+
+    private fun getMarkerIcon(color: Int): BitmapDescriptor {
+        val hsv = FloatArray(3)
+        Color.colorToHSV(color, hsv)
+        return BitmapDescriptorFactory.defaultMarker(hsv[0])
     }
 
 
