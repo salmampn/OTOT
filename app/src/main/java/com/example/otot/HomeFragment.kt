@@ -16,14 +16,15 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import java.text.SimpleDateFormat
+import java.util.*
 
 class HomeFragment : Fragment() {
 
@@ -33,6 +34,7 @@ class HomeFragment : Fragment() {
     private lateinit var movingTimeTextView: TextView
     private lateinit var caloriesTextView: TextView
     private lateinit var totalDistanceTextView: TextView
+    private lateinit var lastActivityContainer: LinearLayout
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,11 +46,12 @@ class HomeFragment : Fragment() {
         movingTimeTextView = view.findViewById(R.id.movingTimeTextView)
         caloriesTextView = view.findViewById(R.id.caloriesTextView)
         totalDistanceTextView = view.findViewById(R.id.totalDistanceTextView)
+        lastActivityContainer = view.findViewById(R.id.last_activity_container)
         auth = FirebaseAuth.getInstance()
-        firestore = Firebase.firestore
+        firestore = FirebaseFirestore.getInstance()
 
         loadUserProfile()
-        loadUserRuns()
+        loadUserHistory()
         loadLastActivities()
 
         return view
@@ -72,10 +75,10 @@ class HomeFragment : Fragment() {
         } ?: showToast("User not authenticated")
     }
 
-    private fun loadUserRuns() {
+    private fun loadUserHistory() {
         val currentUser = auth.currentUser
         currentUser?.let { user ->
-            firestore.collection("runs").whereEqualTo("userId", user.uid).get()
+            firestore.collection("history").whereEqualTo("userId", user.uid).get()
                 .addOnSuccessListener { documents ->
                     var totalDistance = 0.0
                     var totalMovingTimeInSeconds = 0
@@ -96,7 +99,7 @@ class HomeFragment : Fragment() {
                     caloriesTextView.text = "${String.format("%.2f", totalCalories)} cal"
                 }
                 .addOnFailureListener { exception ->
-                    showToast("Failed to load runs: ${exception.message}")
+                    showToast("Failed to load history: ${exception.message}")
                 }
         }
     }
@@ -104,7 +107,7 @@ class HomeFragment : Fragment() {
     private fun loadLastActivities() {
         val currentUser = auth.currentUser
         currentUser?.let { user ->
-            firestore.collection("runs")
+            firestore.collection("history")
                 .whereEqualTo("userId", user.uid)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .limit(3)
@@ -134,8 +137,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun updateLastActivitiesUI(lastActivities: List<LastActivity>) {
-        val lastActivityContainer = view?.findViewById<LinearLayout>(R.id.last_activity_container)
-        lastActivityContainer?.removeAllViews()
+        lastActivityContainer.removeAllViews()
 
         lastActivities.forEach { activity ->
             val activityView = LayoutInflater.from(context)
@@ -155,12 +157,12 @@ class HomeFragment : Fragment() {
             // Initialize the MapView
             mapView.onCreate(null)
             mapView.getMapAsync { googleMap ->
-                googleMap.uiSettings.setAllGesturesEnabled(true)
-                googleMap.uiSettings.setZoomGesturesEnabled(false)
+                googleMap.uiSettings.setAllGesturesEnabled(true) // Disable all gestures
+                googleMap.uiSettings.setZoomGesturesEnabled(false) // Disable zoom gestures
                 drawPathOnMap(googleMap, activity.pathPoints)
             }
 
-            lastActivityContainer?.addView(activityView)
+            lastActivityContainer.addView(activityView)
         }
     }
 
@@ -177,7 +179,14 @@ class HomeFragment : Fragment() {
                 polylineOptions.add(point)
             }
             map.addPolyline(polylineOptions)
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngList[0], 18f))
+
+            // Create bounds to include all points
+            val boundsBuilder = LatLngBounds.Builder()
+            latLngList.forEach { boundsBuilder.include(it) }
+            val bounds = boundsBuilder.build()
+
+            // Move the camera to fit the bounds
+            map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
 
             // Add start marker
             map.addMarker(
@@ -204,8 +213,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun formatDate(timestamp: Long): String {
-        val dateFormat = java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault())
-        return dateFormat.format(java.util.Date(timestamp))
+        val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+        return dateFormat.format(Date(timestamp))
     }
 
     private fun String.toSeconds(): Int {
