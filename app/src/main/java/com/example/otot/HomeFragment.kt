@@ -13,6 +13,8 @@ import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
@@ -117,7 +119,8 @@ class HomeFragment : Fragment() {
                         } else {
                             0L
                         }
-                        val pathPoints = document.get("pathPoints") as? List<Map<String, Double>> ?: emptyList()
+                        val pathPoints =
+                            document.get("pathPoints") as? List<Map<String, Double>> ?: emptyList()
 
                         LastActivity(distance, duration, timeInMillis, pathPoints)
                     }
@@ -135,7 +138,8 @@ class HomeFragment : Fragment() {
         lastActivityContainer?.removeAllViews()
 
         lastActivities.forEach { activity ->
-            val activityView = LayoutInflater.from(context).inflate(R.layout.item_last_activity, lastActivityContainer, false)
+            val activityView = LayoutInflater.from(context)
+                .inflate(R.layout.item_last_activity, lastActivityContainer, false)
 
             // Set the date and duration
             val dateTextView = activityView.findViewById<TextView>(R.id.text_date)
@@ -151,6 +155,8 @@ class HomeFragment : Fragment() {
             // Initialize the MapView
             mapView.onCreate(null)
             mapView.getMapAsync { googleMap ->
+                googleMap.uiSettings.setAllGesturesEnabled(true)
+                googleMap.uiSettings.setZoomGesturesEnabled(false)
                 drawPathOnMap(googleMap, activity.pathPoints)
             }
 
@@ -171,8 +177,30 @@ class HomeFragment : Fragment() {
                 polylineOptions.add(point)
             }
             map.addPolyline(polylineOptions)
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngList[0], 15f))
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngList[0], 18f))
+
+            // Add start marker
+            map.addMarker(
+                MarkerOptions()
+                    .position(latLngList.first())
+                    .title("Start")
+                    .icon(getMarkerIcon(Color.parseColor("#F2801F")))
+            )
+
+            // Add end marker
+            map.addMarker(
+                MarkerOptions()
+                    .position(latLngList.last())
+                    .title("End")
+                    .icon(getMarkerIcon(Color.parseColor("#D70000")))
+            )
         }
+    }
+
+    private fun getMarkerIcon(color: Int): BitmapDescriptor {
+        val hsv = FloatArray(3)
+        Color.colorToHSV(color, hsv)
+        return BitmapDescriptorFactory.defaultMarker(hsv[0])
     }
 
     private fun formatDate(timestamp: Long): String {
@@ -196,5 +224,10 @@ class HomeFragment : Fragment() {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
-    data class LastActivity(val distance: Double, val duration: String, val timestamp: Long, val pathPoints: List<Map<String, Double>>)
+    data class LastActivity(
+        val distance: Double,
+        val duration: String,
+        val timestamp: Long,
+        val pathPoints: List<Map<String, Double>>
+    )
 }

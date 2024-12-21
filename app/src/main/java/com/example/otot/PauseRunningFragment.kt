@@ -14,6 +14,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.ServiceConnection
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Handler
 import android.os.IBinder
 import android.provider.MediaStore
@@ -32,10 +33,15 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 
 class PauseRunningFragment : Fragment() {
     private lateinit var mapView: MapView
@@ -56,6 +62,8 @@ class PauseRunningFragment : Fragment() {
     private var seconds = 0
     private var trackingService: TrackingService? = null
     private var bound = false
+    private var startMarker: Marker? = null
+    private var endMarker: Marker? = null
 
     private val runnable = object : Runnable {
         override fun run() {
@@ -131,6 +139,12 @@ class PauseRunningFragment : Fragment() {
         mapView.getMapAsync { googleMap ->
             googleMap.uiSettings.isZoomControlsEnabled = false
             googleMap.uiSettings.setAllGesturesEnabled(false)
+            googleMap.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    LatLng(0.0, 0.0),
+                    1f
+                )
+            ) // Default position
             startLocationUpdates(googleMap)
         }
 
@@ -195,10 +209,42 @@ class PauseRunningFragment : Fragment() {
                             PolylineOptions().addAll(pathPoints).color(Color.RED).width(5f)
                         )
                         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+
+                        // Update start marker
+                        if (startMarker == null && pathPoints.isNotEmpty()) {
+                            Log.d(
+                                "PauseRunningFragment",
+                                "Adding start marker at: ${pathPoints.first()}"
+                            )
+                            startMarker = googleMap.addMarker(
+                                MarkerOptions()
+                                    .position(pathPoints.first())
+                                    .title("Start")
+                                    .icon(getMarkerIcon(Color.parseColor("#F2801F")))
+                            )
+                        }
+
+                        // Update end marker
+                        if (endMarker != null) {
+                            endMarker?.remove()
+                        }
+                        endMarker = googleMap.addMarker(
+                            MarkerOptions()
+                                .position(pathPoints.last())
+                                .title("End")
+                                .icon(getMarkerIcon(Color.parseColor("#D70000")))
+                        )
+                        Log.d("PauseRunningFragment", "Adding end marker at: ${pathPoints.last()}")
                     }
                 }
             }
         }, Looper.getMainLooper())
+    }
+
+    private fun getMarkerIcon(color: Int): BitmapDescriptor {
+        val hsv = FloatArray(3)
+        Color.colorToHSV(color, hsv)
+        return BitmapDescriptorFactory.defaultMarker(hsv[0])
     }
 
     private fun togglePause() {
@@ -268,7 +314,11 @@ class PauseRunningFragment : Fragment() {
 
     private fun openCamera() {
         // Check for camera permission
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.CAMERA
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             // Request camera permission
             ActivityCompat.requestPermissions(
                 requireActivity(),

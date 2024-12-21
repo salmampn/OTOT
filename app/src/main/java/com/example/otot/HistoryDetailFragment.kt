@@ -15,7 +15,10 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.auth.FirebaseAuth
@@ -57,7 +60,13 @@ class HistoryDetailFragment : Fragment(), OnMapReadyCallback {
         mapView = view.findViewById(R.id.routeMapImage)
 
         // Load the history data from Firestore
-        loadHistoryData(avgPaceTextView, distanceTextView, durationTextView, timestampTextView, caloriesTextView)
+        loadHistoryData(
+            avgPaceTextView,
+            distanceTextView,
+            durationTextView,
+            timestampTextView,
+            caloriesTextView
+        )
 
         // Set up delete button click listener
         deleteButton.setOnClickListener {
@@ -87,7 +96,8 @@ class HistoryDetailFragment : Fragment(), OnMapReadyCallback {
                     val movingTime = document.getString("duration") ?: "00:00:00"
                     val timestamp = document.getTimestamp("timestamp") ?: Timestamp.now()
                     val calories = document.getDouble("calories") ?: 0.0
-                    val pathPoints = document.get("pathPoints") as? List<Map<String, Double>> ?: emptyList()
+                    val pathPoints =
+                        document.get("pathPoints") as? List<Map<String, Double>> ?: emptyList()
 
                     // Set data to views
                     avgPaceTextView.text = String.format("%.2f min/km", avgPace)
@@ -100,6 +110,8 @@ class HistoryDetailFragment : Fragment(), OnMapReadyCallback {
                     // Initialize the map
                     mapView.onCreate(null)
                     mapView.getMapAsync { map ->
+                        map.uiSettings.setAllGesturesEnabled(true)
+                        map.uiSettings.setZoomGesturesEnabled(false)
                         drawPathOnMap(map, pathPoints)
                     }
                 }
@@ -122,8 +134,30 @@ class HistoryDetailFragment : Fragment(), OnMapReadyCallback {
                 polylineOptions.add(point)
             }
             map.addPolyline(polylineOptions)
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngList[0], 15f))
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngList[0], 18f))
+
+            // Add start marker
+            map.addMarker(
+                MarkerOptions()
+                    .position(latLngList.first())
+                    .title("Start")
+                    .icon(getMarkerIcon(Color.parseColor("#F2801F")))
+            )
+
+            // Add end marker
+            map.addMarker(
+                MarkerOptions()
+                    .position(latLngList.last())
+                    .title("End")
+                    .icon(getMarkerIcon(Color.parseColor("#D70000")))
+            )
         }
+    }
+
+    private fun getMarkerIcon(color: Int): BitmapDescriptor {
+        val hsv = FloatArray(3)
+        Color.colorToHSV(color, hsv)
+        return BitmapDescriptorFactory.defaultMarker(hsv[0])
     }
 
     override fun onMapReady(map: GoogleMap) {
@@ -150,7 +184,11 @@ class HistoryDetailFragment : Fragment(), OnMapReadyCallback {
                     findNavController().navigate(R.id.action_historyDetailFragment_to_historyFragment)
                 }
                 .addOnFailureListener { exception ->
-                    Toast.makeText(requireContext(), "Error deleting history: ${exception.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Error deleting history: ${exception.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     dialog.dismiss()
                 }
         }
