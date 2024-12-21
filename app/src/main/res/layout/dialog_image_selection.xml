@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/confirmation_background"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Image"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_gravity="left"/>
+
+    <Button
+        android:id="@+id/take_picture_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Take a Picture"
+        android:fontFamily="@font/roboto_bold"
+        android:textColor="@color/white"
+        android:background="@drawable/abort_button"
+        android:layout_marginTop="16dp"/>
+
+    <Button
+        android:id="@+id/choose_gallery_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Choose from Gallery"
+        android:fontFamily="@font/roboto_bold"
+        android:textColor="@color/white"
+        android:background="@drawable/abort_button"
+        android:layout_marginTop="8dp"/>
+</LinearLayout>

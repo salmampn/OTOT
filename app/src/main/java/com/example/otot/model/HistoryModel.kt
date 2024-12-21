@@ -9,17 +9,13 @@ data class HistoryModel(
     var distance: Double = 0.0,
     var avgPace: Double = 0.0,
     var movingTime: String = "00:00:00",
-    var pathPoints: List<Map<String, Double>> = emptyList(),
+    var pathPoints: List<PathPoint> = emptyList(), // Change here
     var timestamp: Timestamp = Timestamp.now(),
     var calories: Double = 0.0,
     var runId: String = ""
 ) {
     fun getPathPointsAsLatLng(): List<LatLng> {
-        return pathPoints.mapNotNull { point ->
-            val lat = point["lat"]
-            val lng = point["lng"]
-            if (lat != null && lng != null) LatLng(lat, lng) else null
-        }
+        return pathPoints.map { it.toLatLng() } // Use the new PathPoint class
     }
 
     fun getTimestampAsDate(): Date {

@@ -2,6 +2,7 @@ package com.example.otot
 
 import android.graphics.Color
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,29 +10,37 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.example.otot.model.PathPoint
+import com.example.otot.model.HistoryModel
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.auth.FirebaseAuth
-import java.text.SimpleDateFormat
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import java.text.SimpleDateFormat
 import java.util.*
 
-class HistoryDetailFragment : Fragment(), OnMapReadyCallback {
+class HistoryDetailFragment : Fragment() {
 
     private lateinit var mapView: MapView
     private lateinit var firestore: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
     private lateinit var runId: String
+
+    // UI Elements
+    private lateinit var avgPaceTextView: TextView
+    private lateinit var distanceTextView: TextView
+    private lateinit var durationTextView: TextView
+    private lateinit var timestampTextView: TextView
+    private lateinit var caloriesTextView: TextView
+    private lateinit var deleteButton: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,22 +60,20 @@ class HistoryDetailFragment : Fragment(), OnMapReadyCallback {
         auth = FirebaseAuth.getInstance()
 
         // Initialize views
-        val avgPaceTextView: TextView = view.findViewById(R.id.text_avg_pace_value)
-        val distanceTextView: TextView = view.findViewById(R.id.text_distance_value)
-        val durationTextView: TextView = view.findViewById(R.id.text_moving_time_value)
-        val timestampTextView: TextView = view.findViewById(R.id.text_date)
-        val caloriesTextView: TextView = view.findViewById(R.id.text_calories_value)
-        val deleteButton: Button = view.findViewById(R.id.button_delete)
+        avgPaceTextView = view.findViewById(R.id.text_avg_pace_value)
+        distanceTextView = view.findViewById(R.id.text_distance_value)
+        durationTextView = view.findViewById(R.id.text_moving_time_value)
+        timestampTextView = view.findViewById(R.id.text_date)
+        caloriesTextView = view.findViewById(R.id.text_calories_value)
+        deleteButton = view.findViewById(R.id.button_delete)
         mapView = view.findViewById(R.id.routeMapImage)
 
-        // Load the history data from Firestore
-        loadHistoryData(
-            avgPaceTextView,
-            distanceTextView,
-            durationTextView,
-            timestampTextView,
-            caloriesTextView
-        )
+        // Initialize the map
+        mapView.onCreate(savedInstanceState)
+        mapView.getMapAsync { map ->
+            // Load history data
+            loadHistoryData(map)
+        }
 
         // Set up delete button click listener
         deleteButton.setOnClickListener {
@@ -74,67 +81,56 @@ class HistoryDetailFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun loadHistoryData(
-        avgPaceTextView: TextView,
-        distanceTextView: TextView,
-        durationTextView: TextView,
-        timestampTextView: TextView,
-        caloriesTextView: TextView
-    ) {
-        firestore.collection("runs").document(runId)
+    private fun loadHistoryData(map: GoogleMap) {
+        firestore.collection("history").document(runId)
             .get()
             .addOnSuccessListener { document ->
                 if (document != null) {
-                    val date = document.getDate("timestamp")?.toString() ?: "Unknown Date"
-                    val distance = document.getDouble("distance") ?: 0.0
-                    val avgPaceString = document.get("avgPace")?.toString() ?: "0.00/km"
-                    val avgPace = try {
-                        avgPaceString.replace(Regex("[^0-9.]"), "").toDouble()
-                    } catch (e: NumberFormatException) {
-                        0.0
-                    }
-                    val movingTime = document.getString("duration") ?: "00:00:00"
-                    val timestamp = document.getTimestamp("timestamp") ?: Timestamp.now()
-                    val calories = document.getDouble("calories") ?: 0.0
-                    val pathPoints =
-                        document.get("pathPoints") as? List<Map<String, Double>> ?: emptyList()
+                    val historyModel = HistoryModel(
+                        date = document.getDate("timestamp")?.toString() ?: "Unknown Date",
+                        distance = document.getDouble("distance") ?: 0.0,
+                        avgPace = document.get("avgPace")?.toString()?.replace(Regex("[^0-9.]"), "")?.toDouble() ?: 0.0,
+                        movingTime = document.getString("duration") ?: "00:00:00",
+                        timestamp = document.getTimestamp("timestamp") ?: Timestamp.now(),
+                        calories = document.getDouble("calories") ?: 0.0,
+                        runId = document.id,
+                        pathPoints = (document.get("pathPoints") as? List<Map<String, Any>> ?: emptyList()).mapNotNull {
+                            val lat = it["lat"] as? Double
+                            val lng = it["lng"] as? Double
+                            val imageUrl = it["imageUrl"] as? String
+                            if (lat != null && lng != null) {
+                                PathPoint(lat, lng, imageUrl)
+                            } else {
+                                null // Skip invalid points
+                            }
+                        }
+                    )
 
                     // Set data to views
-                    avgPaceTextView.text = String.format("%.2f min/km", avgPace)
-                    distanceTextView.text = String.format("%.2f km", distance)
-                    caloriesTextView.text = String.format("%.2f cal", calories)
-                    durationTextView.text = movingTime
+                    avgPaceTextView.text = String.format("%.2f min/km", historyModel.avgPace)
+                    distanceTextView.text = String.format("%.2f km", historyModel.distance)
+                    caloriesTextView.text = String.format("%.2f cal", historyModel.calories)
+                    durationTextView.text = historyModel.movingTime
                     val dateFormat = SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault())
-                    timestampTextView.text = dateFormat.format(timestamp.toDate())
+                    timestampTextView.text = dateFormat.format(historyModel.getTimestampAsDate())
 
-                    // Initialize the map
-                    mapView.onCreate(null)
-                    mapView.getMapAsync { map ->
-                        map.uiSettings.setAllGesturesEnabled(true)
-                        map.uiSettings.setZoomGesturesEnabled(false)
-                        drawPathOnMap(map, pathPoints)
-                    }
+                    // Draw path on the map using the pathPoints from HistoryModel
+                    drawPathOnMap(map, historyModel.getPathPointsAsLatLng())
                 }
             }
             .addOnFailureListener { exception ->
-                // Handle the error
+                Toast.makeText(requireContext(), "Error loading history data: ${exception.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
-    private fun drawPathOnMap(map: GoogleMap, pathPoints: List<Map<String, Double>>) {
-        val latLngList = pathPoints.mapNotNull { point ->
-            val lat = point["lat"]
-            val lng = point["lng"]
-            if (lat != null && lng != null) LatLng(lat, lng) else null
-        }
-
+    private fun drawPathOnMap(map: GoogleMap, latLngList: List<LatLng>) {
         if (latLngList.isNotEmpty()) {
             val polylineOptions = PolylineOptions().color(Color.RED).width(5f)
             for (point in latLngList) {
                 polylineOptions.add(point)
             }
             map.addPolyline(polylineOptions)
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngList[0], 18f))
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngList[0], 15f))
 
             // Add start marker
             map.addMarker(
@@ -160,10 +156,6 @@ class HistoryDetailFragment : Fragment(), OnMapReadyCallback {
         return BitmapDescriptorFactory.defaultMarker(hsv[0])
     }
 
-    override fun onMapReady(map: GoogleMap) {
-        // This can be used if you want to do something when the map is ready
-    }
-
     private fun showDeleteConfirmation() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_delete_history_confirmation, null)
         val dialogBuilder = AlertDialog.Builder(requireContext())
@@ -176,7 +168,7 @@ class HistoryDetailFragment : Fragment(), OnMapReadyCallback {
         }
 
         dialogView.findViewById<Button>(R.id.positive_button).setOnClickListener {
-            firestore.collection("runs").document(runId)
+            firestore.collection("history").document(runId)
                 .delete()
                 .addOnSuccessListener {
                     Toast.makeText(requireContext(), "History deleted", Toast.LENGTH_SHORT).show()
@@ -207,8 +199,18 @@ class HistoryDetailFragment : Fragment(), OnMapReadyCallback {
         mapView.onPause()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         mapView.onDestroy()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView.onLowMemory()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        mapView.onSaveInstanceState(outState)
     }
 }

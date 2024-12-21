@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.otot.model.HistoryModel
+import com.example.otot.model.PathPoint
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.Timestamp
@@ -26,7 +27,7 @@ class HistoryFragment : Fragment() {
     private val historyList = mutableListOf<HistoryModel>()
     private lateinit var auth: FirebaseAuth
     private lateinit var emptyView: View
-    private lateinit var navController: NavController // Declare NavController
+    private lateinit var navController: NavController
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,6 +39,7 @@ class HistoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
         navController = findNavController()
@@ -51,11 +53,10 @@ class HistoryFragment : Fragment() {
         recyclerView = view.findViewById(R.id.recyclerViewHistory)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-
         emptyView = view.findViewById(R.id.empty_view)
         historyAdapter = HistoryAdapter(historyList, { position ->
             showDeleteConfirmationHistory(position)
-        }, navController) // Pass NavController to HistoryAdapter
+        }, navController)
 
         recyclerView.adapter = historyAdapter
         loadHistory()
@@ -69,7 +70,7 @@ class HistoryFragment : Fragment() {
 
     private fun loadHistory() {
         val currentUserId = auth.currentUser?.uid ?: return
-        firestore.collection("runs")
+        firestore.collection("history")
             .whereEqualTo("userId", currentUserId)
             .get()
             .addOnSuccessListener { result ->
@@ -88,7 +89,19 @@ class HistoryFragment : Fragment() {
                         val timestamp = document.getTimestamp("timestamp") ?: Timestamp.now()
                         val calories = document.getDouble("calories") ?: 0.0
                         val runId = document.id
-                        val pathPoints = document.get("pathPoints") as? List<Map<String, Double>> ?: emptyList()
+                        val pathPoints = document.get("pathPoints") as? List<Map<String, Any>> ?: emptyList()
+
+                        // Convert pathPoints to PathPoint objects
+                        val pathPointList = pathPoints.mapNotNull {
+                            val lat = it["lat"] as? Double
+                            val lng = it["lng"] as? Double
+                            val imageUrl = it["imageUrl"] as? String
+                            if (lat != null && lng != null) {
+                                PathPoint(lat, lng, imageUrl)
+                            } else {
+                                null // Skip invalid points
+                            }
+                        }
 
                         historyList.add(
                             HistoryModel(
@@ -96,7 +109,7 @@ class HistoryFragment : Fragment() {
                                 avgPace = avgPace,
                                 distance = distance,
                                 movingTime = movingTime,
-                                pathPoints = pathPoints,
+                                pathPoints = pathPointList,
                                 timestamp = timestamp,
                                 calories = calories,
                                 runId = runId
@@ -127,6 +140,7 @@ class HistoryFragment : Fragment() {
             historyAdapter.notifyDataSetChanged()
         }
     }
+
     private fun showDeleteConfirmationHistory(position: Int) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_delete_history_confirmation, null)
         val dialogBuilder = AlertDialog.Builder(requireContext())
@@ -140,7 +154,7 @@ class HistoryFragment : Fragment() {
 
         dialogView.findViewById<Button>(R.id.positive_button).setOnClickListener {
             val itemToDelete = historyList[position]
-            firestore.collection("runs").document(itemToDelete.runId)
+            firestore.collection("history").document(itemToDelete.runId)
                 .delete()
                 .addOnSuccessListener {
                     historyAdapter.removeItem(position)
@@ -154,7 +168,7 @@ class HistoryFragment : Fragment() {
                 }
         }
         dialog.show()
-        dialog.setCanceledOnTouchOutside(true) // Allow dialog to close when touching outside
+        dialog.setCanceledOnTouchOutside(true)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 

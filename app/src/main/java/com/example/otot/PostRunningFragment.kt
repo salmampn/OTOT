@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -38,6 +39,11 @@ class PostRunningFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_post_running, container, false)
         mapView = view.findViewById(R.id.routeMapImage)
         btnContinue = view.findViewById(R.id.continueButton)
+        distanceValue = view.findViewById(R.id.distanceValue)
+        avgPaceValue = view.findViewById(R.id.avgPaceValue)
+        movingTimeValue = view.findViewById(R.id.movingTimeValue)
+        caloriesValue = view.findViewById(R.id.caloriesValue)
+
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync { map ->
             googleMap = map
@@ -50,16 +56,13 @@ class PostRunningFragment : Fragment() {
         btnContinue.setOnClickListener {
             findNavController().navigate(R.id.action_postRunningFragment_to_homeFragment)
         }
-        distanceValue = view.findViewById(R.id.distanceValue)
-        avgPaceValue = view.findViewById(R.id.avgPaceValue)
-        movingTimeValue = view.findViewById(R.id.movingTimeValue)
-        caloriesValue = view.findViewById(R.id.caloriesValue)
+
         return view
     }
 
     private fun drawRunPath(runId: String) {
         val db = FirebaseFirestore.getInstance()
-        db.collection("runs").document(runId).get().addOnSuccessListener { document ->
+        db.collection("history").document(runId).get().addOnSuccessListener { document ->
             if (document != null) {
                 val pathPoints = document.get("pathPoints") as? List<Map<String, Double>> ?: emptyList()
                 if (pathPoints.isNotEmpty()) {
@@ -118,6 +121,7 @@ class PostRunningFragment : Fragment() {
             }
         }.addOnFailureListener { exception ->
             Log.e("drawRunPath", "Error fetching document: ${exception.message}")
+            Toast.makeText(requireContext(), "Error fetching document: ${exception.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -126,7 +130,6 @@ class PostRunningFragment : Fragment() {
         Color.colorToHSV(color, hsv)
         return BitmapDescriptorFactory.defaultMarker(hsv[0])
     }
-
 
     override fun onResume() {
         super.onResume()
