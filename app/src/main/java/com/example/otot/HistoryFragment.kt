@@ -171,19 +171,4 @@ class HistoryFragment : Fragment() {
         dialog.setCanceledOnTouchOutside(true)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
-
-    override fun onResume() {
-        super.onResume()
-        historyAdapter.handleRecyclerViewLifecycle("resume")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        historyAdapter.handleRecyclerViewLifecycle("pause")
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        historyAdapter.handleRecyclerViewLifecycle("destroy")
-    }
 }

@@ -70,12 +70,30 @@ class PostRunningFragment : Fragment() {
                     val boundsBuilder = LatLngBounds.Builder()
 
                     for (point in pathPoints) {
-                        val lat = point["lat"]
-                        val lng = point["lng"]
+                        val lat = point["lat"] as? Double
+                        val lng = point["lng"] as? Double
+                        val imageUrl = point["imageUrl"] as? String // Get the imageUrl
+                        val caption = point["caption"] as? String // Get the caption
+
                         if (lat != null && lng != null) {
                             val latLng = LatLng(lat, lng)
                             polylineOptions.add(latLng)
                             boundsBuilder.include(latLng)
+
+                            // Add a marker for the uploaded image if imageUrl is not null
+                            if (imageUrl != null) {
+                                val markerTitle = if (caption.isNullOrEmpty()) {
+                                    "Checkpoint"
+                                } else {
+                                    caption
+                                } // Use the caption as the marker title if available
+                                googleMap.addMarker(
+                                    MarkerOptions()
+                                        .position(latLng)
+                                        .title(markerTitle)
+                                        .icon(getMarkerIcon(Color.parseColor("#FFD93D"))) // Use a different color for image markers
+                                )
+                            }
                         }
                     }
 
@@ -104,6 +122,7 @@ class PostRunningFragment : Fragment() {
                     }
                 }
 
+                // Set other data
                 val distance = document.getDouble("distance") ?: 0.0
                 val avgPaceStr = document.get("avgPace")?.toString() ?: "0.00"
                 val movingTime = document.getString("duration") ?: "00:00:00"

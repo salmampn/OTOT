@@ -15,6 +15,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.ServiceConnection
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Handler
 import android.os.IBinder
 import android.provider.MediaStore
@@ -23,6 +24,7 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -39,7 +41,10 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -65,8 +70,7 @@ class PauseRunningFragment : Fragment() {
     private var seconds = 0
     private var trackingService: TrackingService? = null
     private var bound = false
-//    private var startMarker: Marker? = null
-//    private var endMarker: Marker? = null
+    private var lastKnownLatLng: LatLng? = null // Variable to store the last known coordinates
 
     private val runnable = object : Runnable {
         override fun run() {
@@ -205,6 +209,7 @@ class PauseRunningFragment : Fragment() {
                 if (tracking) {
                     for (location in locationResult.locations) {
                         val latLng = LatLng(location.latitude, location.longitude)
+                        lastKnownLatLng = latLng // Update the last known coordinates
                         // Create a PathPoint object and add it to the list
                         val pathPoint = PathPoint(lat = location.latitude, lng = location.longitude, imageUrl = null)
                         pathPoints.add(pathPoint)
@@ -242,7 +247,7 @@ class PauseRunningFragment : Fragment() {
             "userId" to userId,
             "duration" to duration,
             "pathPoints" to pathPoints.map {
-                mapOf("lat" to it.lat, "lng" to it.lng, "imageUrl" to it.imageUrl) // Include imageUrl
+                mapOf("lat" to it.lat, "lng" to it.lng, "imageUrl" to it.imageUrl, "caption" to it.caption) // Save images and the caption to the respective PathPoint objects
             },
             "distance" to calculateDistance(),
             "avgPace" to calculateAveragePace(),
@@ -358,6 +363,7 @@ class PauseRunningFragment : Fragment() {
         val dialogImage: ImageView = dialogView.findViewById(R.id.dialog_image)
         val retakeButton: Button = dialogView.findViewById(R.id.retake_button)
         val uploadButton: Button = dialogView.findViewById(R.id.upload_button)
+        val captionEditText: EditText = dialogView.findViewById(R.id.caption)
 
         dialogImage.setImageBitmap(image)
 
@@ -368,7 +374,8 @@ class PauseRunningFragment : Fragment() {
 
         uploadButton.setOnClickListener {
             dialog.dismiss()
-            uploadImageToFirebase(image, userId) // Upload the image to Firebase
+            val caption = captionEditText.text.toString()
+            uploadImageToFirebase(image, userId, caption) // Upload the image to Firebase
         }
 
         dialog.show()
@@ -385,6 +392,7 @@ class PauseRunningFragment : Fragment() {
         val dialogImage: ImageView = dialogView.findViewById(R.id.dialog_image)
         val retakeButton: Button = dialogView.findViewById(R.id.retake_button)
         val uploadButton: Button = dialogView.findViewById(R.id.upload_button)
+        val captionEditText: EditText = dialogView.findViewById(R.id.caption)
 
         dialogImage.setImageURI(imageUri)
 
@@ -395,7 +403,8 @@ class PauseRunningFragment : Fragment() {
 
         uploadButton.setOnClickListener {
             dialog.dismiss()
-            uploadImageToFirebase(imageUri, userId) // Upload the image to Firebase
+            val caption = captionEditText.text.toString()
+            uploadImageToFirebase(imageUri, userId, caption) // Upload the image to Firebase
         }
 
         dialog.show()
@@ -403,7 +412,7 @@ class PauseRunningFragment : Fragment() {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
-    private fun uploadImageToFirebase(image: Bitmap, userId: String) {
+    private fun uploadImageToFirebase(image: Bitmap, userId: String, caption: String) {
         // Use a timestamp to create a unique filename for each image
         val timestamp = System.currentTimeMillis()
         val storageRef = FirebaseStorage.getInstance().reference
@@ -420,6 +429,11 @@ class PauseRunningFragment : Fragment() {
                 // Update the imageUrl in the last PathPoint after successful upload
                 if (pathPoints.isNotEmpty()) {
                     pathPoints.last().imageUrl = uri.toString() // Get the download URL
+                    pathPoints.last().caption = if (caption.isEmpty()) "Checkpoint" else caption // Set caption to "Checkpoint" if empty
+                }
+                // Add a marker at the last known coordinates
+                lastKnownLatLng?.let { latLng ->
+                    addMarkerAtLocation(latLng, caption) // Add marker with the image URL
                 }
                 Toast.makeText(requireContext(), "Image uploaded successfully", Toast.LENGTH_SHORT).show()
             }.addOnFailureListener { e ->
@@ -430,7 +444,7 @@ class PauseRunningFragment : Fragment() {
         }
     }
 
-    private fun uploadImageToFirebase(imageUri: Uri, userId: String) {
+    private fun uploadImageToFirebase(imageUri: Uri, userId: String, caption: String) {
         // Use a timestamp to create a unique filename for each image
         val timestamp = System.currentTimeMillis()
         val storageRef = FirebaseStorage.getInstance().reference
@@ -443,6 +457,11 @@ class PauseRunningFragment : Fragment() {
                 // Update the imageUrl in the last PathPoint after successful upload
                 if (pathPoints.isNotEmpty()) {
                     pathPoints.last().imageUrl = uri.toString() // Get the download URL
+                    pathPoints.last().caption = if (caption.isEmpty()) "Checkpoint" else caption // Set caption to "Checkpoint" if empty
+                }
+                // Add a marker at the last known coordinates
+                lastKnownLatLng?.let { latLng ->
+                    addMarkerAtLocation(latLng,caption) // Add marker with the image URL
                 }
                 Toast.makeText(requireContext(), "Image uploaded successfully", Toast.LENGTH_SHORT).show()
             }.addOnFailureListener { e ->
@@ -451,6 +470,25 @@ class PauseRunningFragment : Fragment() {
         }.addOnFailureListener { e ->
             Toast.makeText(requireContext(), "Upload failed: ${e.message}", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun addMarkerAtLocation(latLng: LatLng, caption: String?) {
+        // Add a marker at the last known coordinates
+        val markerTitle = if (caption.isNullOrEmpty()) "Checkpoint" else caption
+        mapView.getMapAsync { map ->
+            map.addMarker(
+                MarkerOptions()
+                    .position(latLng)
+                    .title(markerTitle)
+                    .icon(getMarkerIcon(Color.parseColor("#FFD93D")))
+            )
+        }
+    }
+
+    private fun getMarkerIcon(color: Int): BitmapDescriptor {
+        val hsv = FloatArray(3)
+        Color.colorToHSV(color, hsv)
+        return BitmapDescriptorFactory.defaultMarker(hsv[0])
     }
 
     override fun onRequestPermissionsResult(
