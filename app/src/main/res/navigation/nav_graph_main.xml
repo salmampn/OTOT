@@ -67,7 +67,11 @@
     <fragment
         android:id="@+id/changePasswordFragment"
         android:name="com.example.otot.ChangePasswordFragment"
-        android:label="Change Password" />
+        android:label="Change Password" >
+        <action
+            android:id="@+id/action_changePasswordFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
     <fragment
         android:id="@+id/postRunningFragment"
         android:name="com.example.otot.PostRunningFragment"
