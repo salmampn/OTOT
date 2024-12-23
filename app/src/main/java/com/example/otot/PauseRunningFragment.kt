@@ -178,6 +178,9 @@ class PauseRunningFragment : Fragment() {
 
         btnCamera.setOnClickListener {
             animateButton(btnCamera)
+            if (tracking) {
+                togglePause()
+            }
             showImageSelectionDialog()
         }
 
@@ -219,10 +222,15 @@ class PauseRunningFragment : Fragment() {
                         val latLng = LatLng(location.latitude, location.longitude)
                         lastKnownLatLng = latLng // Update the last known coordinates
                         // Create a PathPoint object and add it to the list
-                        val pathPoint = PathPoint(lat = location.latitude, lng = location.longitude, imageUrl = null)
+                        val pathPoint = PathPoint(
+                            lat = location.latitude,
+                            lng = location.longitude,
+                            imageUrl = null
+                        )
                         pathPoints.add(pathPoint)
                         googleMap.addPolyline(
-                            PolylineOptions().addAll(pathPoints.map { LatLng(it.lat, it.lng) }).color(Color.RED).width(5f)
+                            PolylineOptions().addAll(pathPoints.map { LatLng(it.lat, it.lng) })
+                                .color(Color.RED).width(5f)
                         )
                         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
                     }
@@ -247,7 +255,8 @@ class PauseRunningFragment : Fragment() {
     private fun saveRunData(): String {
         val duration = tvTime.text
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return ""
-        val runId = this.runId ?: FirebaseFirestore.getInstance().collection("history").document().id // Use existing runId
+        val runId = this.runId ?: FirebaseFirestore.getInstance().collection("history")
+            .document().id // Use existing runId
 
         val timestamp = com.google.firebase.Timestamp.now()
 
@@ -255,7 +264,12 @@ class PauseRunningFragment : Fragment() {
             "userId" to userId,
             "duration" to duration,
             "pathPoints" to pathPoints.map {
-                mapOf("lat" to it.lat, "lng" to it.lng, "imageUrl" to it.imageUrl, "caption" to it.caption) // Save images and the caption to the respective PathPoint objects
+                mapOf(
+                    "lat" to it.lat,
+                    "lng" to it.lng,
+                    "imageUrl" to it.imageUrl,
+                    "caption" to it.caption
+                ) // Save images and the caption to the respective PathPoint objects
             },
             "distance" to calculateDistance(),
             "avgPace" to calculateAveragePace(),
@@ -266,11 +280,16 @@ class PauseRunningFragment : Fragment() {
         // Save the run data to Firestore
         FirebaseFirestore.getInstance().collection("history").document(runId).set(runData)
             .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Run data saved successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Run data saved successfully", Toast.LENGTH_SHORT)
+                    .show()
             }
             .addOnFailureListener { e ->
                 Log.e("FirestoreError", "Failed to save run data: ${e.message}")
-                Toast.makeText(requireContext(), "Failed to save run data: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Failed to save run data: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         return runId
     }
@@ -335,7 +354,11 @@ class PauseRunningFragment : Fragment() {
         if (cameraIntent.resolveActivity(requireActivity().packageManager) != null) {
             startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE)
         } else {
-            Toast.makeText(requireContext(), "Camera not available on this device.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                "Camera not available on this device.",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -354,11 +377,14 @@ class PauseRunningFragment : Fragment() {
                     val imageBitmap = data?.extras?.get("data") as? Bitmap
                     imageBitmap?.let { showConfirmationDialog(it, userId) }
                 }
+
                 GALLERY_REQUEST_CODE -> {
                     val selectedImageUri = data?.data
                     selectedImageUri?.let { showConfirmationDialog(it, userId) }
                 }
             }
+        } else {
+            togglePause()
         }
     }
 
@@ -384,6 +410,7 @@ class PauseRunningFragment : Fragment() {
             dialog.dismiss()
             val caption = captionEditText.text.toString()
             uploadImageToFirebase(image, userId, caption) // Upload the image to Firebase
+            togglePause()
         }
 
         dialog.show()
@@ -413,6 +440,7 @@ class PauseRunningFragment : Fragment() {
             dialog.dismiss()
             val caption = captionEditText.text.toString()
             uploadImageToFirebase(imageUri, userId, caption) // Upload the image to Firebase
+            togglePause()
         }
 
         dialog.show()
@@ -437,18 +465,29 @@ class PauseRunningFragment : Fragment() {
                 // Update the imageUrl in the last PathPoint after successful upload
                 if (pathPoints.isNotEmpty()) {
                     pathPoints.last().imageUrl = uri.toString() // Get the download URL
-                    pathPoints.last().caption = if (caption.isEmpty()) "Checkpoint" else caption // Set caption to "Checkpoint" if empty
+                    pathPoints.last().caption =
+                        if (caption.isEmpty()) "Checkpoint" else caption // Set caption to "Checkpoint" if empty
                 }
                 // Add a marker at the last known coordinates
                 lastKnownLatLng?.let { latLng ->
-                    addMarkerAtLocation(latLng, uri.toString(), caption) // Add marker with the image URL
+                    addMarkerAtLocation(
+                        latLng,
+                        uri.toString(),
+                        caption
+                    ) // Add marker with the image URL
                 }
-                Toast.makeText(requireContext(), "Image uploaded successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Image uploaded successfully", Toast.LENGTH_SHORT)
+                    .show()
             }.addOnFailureListener { e ->
-                Toast.makeText(requireContext(), "Failed to get download URL: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Failed to get download URL: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }.addOnFailureListener { e ->
-            Toast.makeText(requireContext(), "Upload failed: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Upload failed: ${e.message}", Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
@@ -465,18 +504,29 @@ class PauseRunningFragment : Fragment() {
                 // Update the imageUrl in the last PathPoint after successful upload
                 if (pathPoints.isNotEmpty()) {
                     pathPoints.last().imageUrl = uri.toString() // Get the download URL
-                    pathPoints.last().caption = if (caption.isEmpty()) "Checkpoint" else caption // Set caption to "Checkpoint" if empty
+                    pathPoints.last().caption =
+                        if (caption.isEmpty()) "Checkpoint" else caption // Set caption to "Checkpoint" if empty
                 }
                 // Add a marker at the last known coordinates
                 lastKnownLatLng?.let { latLng ->
-                    addMarkerAtLocation(latLng, imageUri.toString(), caption) // Add marker with the image URL
+                    addMarkerAtLocation(
+                        latLng,
+                        imageUri.toString(),
+                        caption
+                    ) // Add marker with the image URL
                 }
-                Toast.makeText(requireContext(), "Image uploaded successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Image uploaded successfully", Toast.LENGTH_SHORT)
+                    .show()
             }.addOnFailureListener { e ->
-                Toast.makeText(requireContext(), "Failed to get download URL: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Failed to get download URL: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }.addOnFailureListener { e ->
-            Toast.makeText(requireContext(), "Upload failed: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Upload failed: ${e.message}", Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
@@ -530,7 +580,11 @@ class PauseRunningFragment : Fragment() {
                     // Create a bitmap from the marker view
                     markerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
                     markerView.layout(0, 0, markerView.measuredWidth, markerView.measuredHeight)
-                    val bitmap = Bitmap.createBitmap(markerView.measuredWidth, markerView.measuredHeight, Bitmap.Config.ARGB_8888)
+                    val bitmap = Bitmap.createBitmap(
+                        markerView.measuredWidth,
+                        markerView.measuredHeight,
+                        Bitmap.Config.ARGB_8888
+                    )
                     val canvas = Canvas(bitmap)
                     markerView.draw(canvas)
 
@@ -552,7 +606,8 @@ class PauseRunningFragment : Fragment() {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 openCamera()
             } else {
-                Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
