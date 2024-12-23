@@ -7,13 +7,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.addCallback
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -23,6 +20,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
 
 class LoginFragment : Fragment() {
 
@@ -103,8 +101,11 @@ class LoginFragment : Fragment() {
     }
 
     private fun signInWithGoogle() {
-        val signInIntent = googleSignInClient.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
+        // Sign out of GoogleSignInClient to clear the cached account
+        googleSignInClient.signOut().addOnCompleteListener {
+            val signInIntent = googleSignInClient.signInIntent
+            startActivityForResult(signInIntent, LoginFragment.RC_SIGN_IN)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -130,17 +131,69 @@ class LoginFragment : Fragment() {
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
                     val user = firebaseAuth.currentUser
-                    // Navigate to MainActivity
-                    val intent = Intent(requireContext(), MainActivity::class.java)
-                    startActivity(intent)
-                    requireActivity().finish()
+
+                    // Check if user exists in Firestore
+                    user?.let { firebaseUser ->
+                        FirebaseFirestore.getInstance()
+                            .collection("users")
+                            .document(firebaseUser.uid)
+                            .get()
+                            .addOnSuccessListener { document ->
+                                if (document.exists()) {
+                                    // Existing user - navigate to MainActivity
+                                    val intent = Intent(requireContext(), MainActivity::class.java)
+                                    startActivity(intent)
+                                    requireActivity().finish()
+                                } else {
+                                    // New user - navigate to InitProfileFragment
+                                    navigateToInitProfile(acct)
+                                }
+                            }
+                            .addOnFailureListener { exception ->
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Error checking user: ${exception.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                    }
                 } else {
-                    // If sign in fails, display a message to the user.
-                    Toast.makeText(requireContext(), "Authentication failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Authentication failed: ${task.exception?.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
+    }
+
+    private fun navigateToInitProfile(googleAccount: GoogleSignInAccount) {
+        // Pre-populate user data in Firestore
+        val user = firebaseAuth.currentUser
+        user?.let { firebaseUser ->
+            val userData = hashMapOf(
+                "name" to googleAccount.displayName,
+                "email" to googleAccount.email,
+                "profileImageUrl" to (googleAccount.photoUrl?.toString() ?: "")
+            )
+
+            FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(firebaseUser.uid)
+                .set(userData)
+                .addOnSuccessListener {
+                    // Navigate to InitProfileFragment
+                    findNavController().navigate(R.id.action_loginFragment_to_initProfileFragment)
+                }
+                .addOnFailureListener { exception ->
+                    Toast.makeText(
+                        requireContext(),
+                        "Error creating user: ${exception.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+        }
     }
 
     companion object {

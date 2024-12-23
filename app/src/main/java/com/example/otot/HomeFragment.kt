@@ -13,7 +13,9 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -46,6 +48,7 @@ class HomeFragment : Fragment() {
     private lateinit var caloriesTextView: TextView
     private lateinit var totalDistanceTextView: TextView
     private lateinit var lastActivityContainer: LinearLayout
+    private lateinit var lastActivityBtn: CardView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,6 +63,12 @@ class HomeFragment : Fragment() {
         lastActivityContainer = view.findViewById(R.id.last_activity_container)
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
+
+        lastActivityBtn = view.findViewById(R.id.last_activity_card)
+
+        lastActivityBtn.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_historyFragment)
+        }
 
         loadUserProfile()
         loadUserHistory()
