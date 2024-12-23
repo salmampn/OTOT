@@ -19,6 +19,8 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
@@ -187,6 +189,7 @@ class ProfileFragment : Fragment() {
                     profilePicRef.delete().addOnSuccessListener {
                         Log.d("DeleteAccount", "Profile picture deleted successfully.")
                         deleteUserRuns(uid)
+                        deleteUserImages(uid)
                     }.addOnFailureListener { e ->
                         Log.e("DeleteAccount", "Error deleting profile picture: ${e.message}")
                     }
@@ -197,7 +200,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun deleteUserRuns(uid: String) {
-        firestore.collection("runs").whereEqualTo("userId", uid).get()
+        firestore.collection("history").whereEqualTo("userId", uid).get()
             .addOnSuccessListener { querySnapshot ->
                 for (document in querySnapshot.documents) {
                     document.reference.delete()
@@ -211,6 +214,36 @@ class ProfileFragment : Fragment() {
             }.addOnFailureListener { e ->
                 Log.e("DeleteAccount", "Error fetching runs: ${e.message}")
             }
+    }
+
+    private fun deleteUserImages(uid: String) {
+        val storageRef = FirebaseStorage.getInstance().reference
+        val runsImagesRef = storageRef.child("images/$uid")
+
+        // Delete all images under the user's directory
+        runsImagesRef.listAll().addOnSuccessListener { listResult ->
+            // Create a list to hold the deletion tasks
+            val deleteTasks = mutableListOf<Task<Void>>()
+
+            for (item in listResult.items) {
+                // Add each delete task to the list
+                deleteTasks.add(item.delete().addOnSuccessListener {
+                    Log.d("DeleteAccount", "Image ${item.name} deleted successfully.")
+                }.addOnFailureListener { e ->
+                    Log.e("DeleteAccount", "Error deleting image ${item.name}: ${e.message}")
+                })
+            }
+
+            // Wait for all delete tasks to complete
+            Tasks.whenAllComplete(deleteTasks).addOnCompleteListener {
+                // After all images are deleted, you can log or perform additional actions
+                Log.d("DeleteAccount", "All images deleted successfully for user $uid.")
+                // Optionally, you can delete the folder reference itself if needed
+                // Note: The folder will be removed automatically if it's empty
+            }
+        }.addOnFailureListener { e ->
+            Log.e("DeleteAccount", "Error listing images: ${e.message}")
+        }
     }
 
     private fun deleteFirebaseUser() {

@@ -16,6 +16,8 @@ import android.content.Context
 import android.content.ServiceConnection
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.IBinder
 import android.provider.MediaStore
@@ -32,6 +34,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.example.otot.model.PathPoint
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -433,7 +441,7 @@ class PauseRunningFragment : Fragment() {
                 }
                 // Add a marker at the last known coordinates
                 lastKnownLatLng?.let { latLng ->
-                    addMarkerAtLocation(latLng, caption) // Add marker with the image URL
+                    addMarkerAtLocation(latLng, image.toString(), caption) // Add marker with the image URL
                 }
                 Toast.makeText(requireContext(), "Image uploaded successfully", Toast.LENGTH_SHORT).show()
             }.addOnFailureListener { e ->
@@ -461,7 +469,7 @@ class PauseRunningFragment : Fragment() {
                 }
                 // Add a marker at the last known coordinates
                 lastKnownLatLng?.let { latLng ->
-                    addMarkerAtLocation(latLng,caption) // Add marker with the image URL
+                    addMarkerAtLocation(latLng, imageUri.toString(), caption) // Add marker with the image URL
                 }
                 Toast.makeText(requireContext(), "Image uploaded successfully", Toast.LENGTH_SHORT).show()
             }.addOnFailureListener { e ->
@@ -472,23 +480,66 @@ class PauseRunningFragment : Fragment() {
         }
     }
 
-    private fun addMarkerAtLocation(latLng: LatLng, caption: String?) {
+    private fun addMarkerAtLocation(latLng: LatLng, imageUri: String, caption: String?) {
         // Add a marker at the last known coordinates
         val markerTitle = if (caption.isNullOrEmpty()) "Checkpoint" else caption
-        mapView.getMapAsync { map ->
-            map.addMarker(
-                MarkerOptions()
-                    .position(latLng)
-                    .title(markerTitle)
-                    .icon(getMarkerIcon(Color.parseColor("#FFD93D")))
-            )
+        createCustomMarker(imageUri) { bitmapDescriptor ->
+            // Ensure this runs on the main thread
+            requireActivity().runOnUiThread {
+                mapView.getMapAsync { map ->
+                    map.addMarker(
+                        MarkerOptions()
+                            .position(latLng)
+                            .title(markerTitle)
+                            .icon(bitmapDescriptor) // Use the custom marker
+                    )
+                }
+            }
         }
     }
 
-    private fun getMarkerIcon(color: Int): BitmapDescriptor {
-        val hsv = FloatArray(3)
-        Color.colorToHSV(color, hsv)
-        return BitmapDescriptorFactory.defaultMarker(hsv[0])
+    private fun createCustomMarker(imageUrl: String, callback: (BitmapDescriptor) -> Unit) {
+        val markerView = LayoutInflater.from(requireContext()).inflate(R.layout.custom_marker, null)
+        val imageView = markerView.findViewById<ImageView>(R.id.marker_image)
+
+        // Load the image using Glide
+        Glide.with(requireContext())
+            .load(imageUrl)
+            .apply(RequestOptions.circleCropTransform()) // Apply circular crop
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    // Handle the error (optional)
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    // Set the loaded image into the ImageView
+                    imageView.setImageDrawable(resource)
+
+                    // Create a bitmap from the marker view
+                    markerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+                    markerView.layout(0, 0, markerView.measuredWidth, markerView.measuredHeight)
+                    val bitmap = Bitmap.createBitmap(markerView.measuredWidth, markerView.measuredHeight, Bitmap.Config.ARGB_8888)
+                    val canvas = Canvas(bitmap)
+                    markerView.draw(canvas)
+
+                    // Call the callback with the created bitmap descriptor
+                    callback(BitmapDescriptorFactory.fromBitmap(bitmap))
+                    return true
+                }
+            })
+            .submit() // Ensure the image is loaded
     }
 
     override fun onRequestPermissionsResult(

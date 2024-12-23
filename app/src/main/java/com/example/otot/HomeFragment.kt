@@ -1,15 +1,26 @@
 package com.example.otot
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
+import com.example.otot.model.PathPoint
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -122,8 +133,17 @@ class HomeFragment : Fragment() {
                         } else {
                             0L
                         }
-                        val pathPoints =
-                            document.get("pathPoints") as? List<Map<String, Double>> ?: emptyList()
+                        val pathPoints = (document.get("pathPoints") as? List<Map<String, Any>> ?: emptyList()).mapNotNull {
+                            val lat = it["lat"] as? Double
+                            val lng = it["lng"] as? Double
+                            val imageUrl = it["imageUrl"] as? String
+                            val caption = it["caption"] as? String
+                            if (lat != null && lng != null) {
+                                PathPoint(lat, lng, imageUrl, caption)
+                            } else {
+                                null // Skip invalid points
+                            }
+                        }
 
                         LastActivity(distance, duration, timeInMillis, pathPoints)
                     }
@@ -157,8 +177,7 @@ class HomeFragment : Fragment() {
             // Initialize the MapView
             mapView.onCreate(null)
             mapView.getMapAsync { googleMap ->
-                googleMap.uiSettings.setAllGesturesEnabled(true) // Disable all gestures
-                googleMap.uiSettings.setZoomGesturesEnabled(false) // Disable zoom gestures
+                googleMap.uiSettings.setAllGesturesEnabled(true) // Enable all gestures
                 drawPathOnMap(googleMap, activity.pathPoints)
             }
 
@@ -166,12 +185,9 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun drawPathOnMap(map: GoogleMap, pathPoints: List<Map<String, Double>>) {
-        val latLngList = pathPoints.mapNotNull { point ->
-            val lat = point["lat"]
-            val lng = point["lng"]
-            if (lat != null && lng != null) LatLng(lat, lng) else null
-        }
+
+    private fun drawPathOnMap(map: GoogleMap, pathPoints: List<PathPoint>) {
+        val latLngList = pathPoints.map { LatLng(it.lat, it.lng) }
 
         if (latLngList.isNotEmpty()) {
             val polylineOptions = PolylineOptions().color(Color.RED).width(5f)
@@ -203,7 +219,70 @@ class HomeFragment : Fragment() {
                     .title("End")
                     .icon(getMarkerIcon(Color.parseColor("#D70000")))
             )
+
+            // Add markers for each path point
+            for (pathPoint in pathPoints) {
+                pathPoint.imageUrl?.let { imageUrl ->
+                    createCustomMarker(imageUrl) { bitmapDescriptor ->
+                        // Add the custom marker at the path point
+                        map.addMarker(
+                            MarkerOptions()
+                                .position(LatLng(pathPoint.lat, pathPoint.lng))
+                                .icon(bitmapDescriptor)
+                        )
+                    }
+                }
+            }
         }
+    }
+
+    private fun createCustomMarker(imageUrl: String, callback: (BitmapDescriptor) -> Unit) {
+        val markerView = LayoutInflater.from(requireContext()).inflate(R.layout.custom_marker, null)
+        val imageView = markerView.findViewById<ImageView>(R.id.marker_image)
+
+        // Load the image using Glide
+        Glide.with(requireContext())
+            .load(imageUrl)
+            .apply(RequestOptions.circleCropTransform()) // Apply circular crop
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    // Handle the error (optional)
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    // Set the loaded image into the ImageView
+                    imageView.setImageDrawable(resource)
+
+                    // Create a bitmap from the marker view
+                    markerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+                    markerView.layout(0, 0, markerView.measuredWidth, markerView.measuredHeight)
+                    val bitmap = Bitmap.createBitmap(markerView.measuredWidth, markerView.measuredHeight, Bitmap.Config.ARGB_8888)
+                    val canvas = Canvas(bitmap)
+                    markerView.draw(canvas)
+
+                    // Call the callback with the created bitmap descriptor
+                    val bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap)
+
+                    // Ensure the marker is added on the main thread
+                    requireActivity().runOnUiThread {
+                        callback(bitmapDescriptor)
+                    }
+                    return true
+                }
+            })
+            .submit() // Ensure the image is loaded
     }
 
     private fun getMarkerIcon(color: Int): BitmapDescriptor {
@@ -237,6 +316,6 @@ class HomeFragment : Fragment() {
         val distance: Double,
         val duration: String,
         val timestamp: Long,
-        val pathPoints: List<Map<String, Double>>
+        val pathPoints: List<PathPoint> // Change this to hold PathPoint objects
     )
 }
