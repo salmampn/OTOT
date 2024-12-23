@@ -1,6 +1,9 @@
 package com.example.otot
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -8,9 +11,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
+import com.example.otot.model.PathPoint
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -18,6 +30,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.firebase.firestore.FirebaseFirestore
@@ -30,6 +43,9 @@ class PostRunningFragment : Fragment() {
     private lateinit var avgPaceValue: TextView
     private lateinit var movingTimeValue: TextView
     private lateinit var caloriesValue: TextView
+
+    // Map to hold markers and their associated PathPoint data
+    private val markerMap = mutableMapOf<Marker, PathPoint>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,6 +67,15 @@ class PostRunningFragment : Fragment() {
             googleMap.uiSettings.setZoomGesturesEnabled(false)
             val runId = arguments?.getString("runId") ?: return@getMapAsync
             drawRunPath(runId)
+
+            // Set a click listener for the markers
+            googleMap.setOnMarkerClickListener { clickedMarker ->
+                markerMap[clickedMarker]?.let { pathPoint ->
+                    // Show the image dialog with the correct image URL and caption
+                    showImageDialog(pathPoint.imageUrl!!, pathPoint.caption)
+                    true // Return true to indicate the event was handled
+                } ?: false // Return false to allow default behavior
+            }
         }
 
         btnContinue.setOnClickListener {
@@ -64,7 +89,7 @@ class PostRunningFragment : Fragment() {
         val db = FirebaseFirestore.getInstance()
         db.collection("history").document(runId).get().addOnSuccessListener { document ->
             if (document != null) {
-                val pathPoints = document.get("pathPoints") as? List<Map<String, Double>> ?: emptyList()
+                val pathPoints = document.get("pathPoints") as? List<Map<String, Any>> ?: emptyList()
                 if (pathPoints.isNotEmpty()) {
                     val polylineOptions = PolylineOptions().color(Color.RED).width(5f)
                     val boundsBuilder = LatLngBounds.Builder()
@@ -72,8 +97,8 @@ class PostRunningFragment : Fragment() {
                     for (point in pathPoints) {
                         val lat = point["lat"] as? Double
                         val lng = point["lng"] as? Double
-                        val imageUrl = point["imageUrl"] as? String // Get the imageUrl
-                        val caption = point["caption"] as? String // Get the caption
+                        val imageUrl = point["imageUrl"] as? String
+                        val caption = point["caption"] as? String
 
                         if (lat != null && lng != null) {
                             val latLng = LatLng(lat, lng)
@@ -82,17 +107,21 @@ class PostRunningFragment : Fragment() {
 
                             // Add a marker for the uploaded image if imageUrl is not null
                             if (imageUrl != null) {
-                                val markerTitle = if (caption.isNullOrEmpty()) {
-                                    "Checkpoint"
-                                } else {
-                                    caption
-                                } // Use the caption as the marker title if available
-                                googleMap.addMarker(
-                                    MarkerOptions()
-                                        .position(latLng)
-                                        .title(markerTitle)
-                                        .icon(getMarkerIcon(Color.parseColor("#FFD93D"))) // Use a different color for image markers
-                                )
+                                val pathPoint = PathPoint(lat, lng, imageUrl, caption)
+                                createCustomMarker(imageUrl) { bitmapDescriptor ->
+                                    // Ensure this runs on the main thread
+                                    requireActivity().runOnUiThread {
+                                        // Add the marker to the map and associate it with the PathPoint
+                                        val marker = googleMap.addMarker(
+                                            MarkerOptions()
+                                                .position(latLng)
+                                                .icon(bitmapDescriptor)
+                                        )
+                                        marker?.let {
+                                            markerMap[it] = pathPoint // Associate marker with PathPoint
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -144,10 +173,84 @@ class PostRunningFragment : Fragment() {
         }
     }
 
+    private fun createCustomMarker(imageUrl: String, callback: (BitmapDescriptor) -> Unit) {
+        val markerView = LayoutInflater.from(requireContext()).inflate(R.layout.custom_marker, null)
+        val imageView = markerView.findViewById<ImageView>(R.id.marker_image)
+
+        // Load the image using Glide
+        Glide.with(requireContext())
+            .load(imageUrl)
+            .apply(RequestOptions.circleCropTransform()) // Apply circular crop
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    // Handle the error (optional)
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    // Set the loaded image into the ImageView
+                    imageView.setImageDrawable(resource)
+
+                    // Create a bitmap from the marker view
+                    markerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+                    markerView.layout(0, 0, markerView.measuredWidth, markerView.measuredHeight)
+                    val bitmap = Bitmap.createBitmap(markerView.measuredWidth, markerView.measuredHeight, Bitmap.Config.ARGB_8888)
+                    val canvas = Canvas(bitmap)
+                    markerView.draw(canvas)
+
+                    // Call the callback with the created bitmap descriptor
+                    callback(BitmapDescriptorFactory.fromBitmap(bitmap))
+                    return true
+                }
+            })
+            .submit() // Ensure the image is loaded
+    }
+
     private fun getMarkerIcon(color: Int): BitmapDescriptor {
         val hsv = FloatArray(3)
         Color.colorToHSV(color, hsv)
         return BitmapDescriptorFactory.defaultMarker(hsv[0])
+    }
+
+    private fun showImageDialog(imageUrl: String, caption: String?) {
+        // Disable map interaction
+        mapView.isEnabled = false
+
+        val dialogView = layoutInflater.inflate(R.layout.dialog_image_view, null)
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .create()
+
+        val captionTextView: TextView = dialogView.findViewById(R.id.caption)
+        val imageView: ImageView = dialogView.findViewById(R.id.image_view)
+
+        // Load the image from the URL using Glide
+        Glide.with(requireContext())
+            .load(imageUrl)
+            .into(imageView)
+
+        // Set the caption text
+        captionTextView.text = caption ?: "Checkpoint" // Default text if caption is null
+
+        dialog.setOnDismissListener {
+            // Re-enable map interaction when the dialog is dismissed
+            mapView.isEnabled = true
+        }
+
+        dialog.show()
+        dialog.setCanceledOnTouchOutside(true) // Allow dialog to close when touching outside
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
     override fun onResume() {
