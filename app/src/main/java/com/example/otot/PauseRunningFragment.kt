@@ -441,7 +441,7 @@ class PauseRunningFragment : Fragment() {
                 }
                 // Add a marker at the last known coordinates
                 lastKnownLatLng?.let { latLng ->
-                    addMarkerAtLocation(latLng, image.toString(), caption) // Add marker with the image URL
+                    addMarkerAtLocation(latLng, uri.toString(), caption) // Add marker with the image URL
                 }
                 Toast.makeText(requireContext(), "Image uploaded successfully", Toast.LENGTH_SHORT).show()
             }.addOnFailureListener { e ->

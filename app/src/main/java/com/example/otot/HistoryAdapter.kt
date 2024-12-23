@@ -38,6 +38,10 @@ class HistoryAdapter(
     private val navController: NavController
 ) : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
 
+    // Keep track of all active MapViews
+    private val mapViews = mutableMapOf<Int, MapView>()
+    private val maps = mutableMapOf<Int, GoogleMap>()
+
     inner class HistoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val avgPaceTextView: TextView = itemView.findViewById(R.id.text_avg_pace_value)
         private val distanceTextView: TextView = itemView.findViewById(R.id.text_distance_value)
@@ -55,13 +59,20 @@ class HistoryAdapter(
             val dateFormat = SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault())
             timestampTextView.text = dateFormat.format(history.getTimestampAsDate())
 
+            // Store MapView reference
+            mapViews[position] = mapView
+
+            // Initialize MapView
             mapView.onCreate(null)
             mapView.getMapAsync { map ->
+                maps[position] = map
                 map.uiSettings.setAllGesturesEnabled(true)
                 drawPathOnMap(map, history.getPathPointsAsLatLng(), history)
             }
-            mapView.onResume()
+
             deleteButton.setOnClickListener {
+                // Clean up map resources before deletion
+                cleanupMapResources(position)
                 onDeleteClick(position)
             }
 
@@ -75,49 +86,62 @@ class HistoryAdapter(
 
         private fun drawPathOnMap(map: GoogleMap, pathPoints: List<LatLng>, history: HistoryModel) {
             if (pathPoints.isNotEmpty()) {
+                map.clear() // Clear previous markers and polylines
+
                 val polylineOptions = PolylineOptions().color(Color.RED).width(5f)
                 val boundsBuilder = LatLngBounds.Builder()
+
                 for (point in pathPoints) {
                     polylineOptions.add(point)
                     boundsBuilder.include(point)
                 }
+
                 map.addPolyline(polylineOptions)
-                val bounds = boundsBuilder.build()
-                map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
 
+                try {
+                    val bounds = boundsBuilder.build()
+                    val padding = 100 // padding in pixels
+                    map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding))
+                } catch (e: IllegalStateException) {
+                    // Handle the case when bounds cannot be calculated
+                    if (pathPoints.isNotEmpty()) {
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(pathPoints[0], 15f))
+                    }
+                }
+                
                 // Add start marker
-                val startLatLng = pathPoints.first()
-                map.addMarker(
-                    MarkerOptions()
-                        .position(startLatLng)
-                        .title("Start")
-                        .icon(getMarkerIcon(Color.parseColor("#F2801F")))
-                )
+                if (pathPoints.isNotEmpty()) {
+                    map.addMarker(
+                        MarkerOptions()
+                            .position(pathPoints.first())
+                            .title("Start")
+                            .icon(getMarkerIcon(Color.parseColor("#F2801F")))
+                    )
 
-                // Add end marker
-                val endLatLng = pathPoints.last()
-                map.addMarker(
-                    MarkerOptions()
-                        .position(endLatLng)
-                        .title("End")
-                        .icon(getMarkerIcon(Color.parseColor("#D70000")))
-                )
+                    // Add end marker
+                    map.addMarker(
+                        MarkerOptions()
+                            .position(pathPoints.last())
+                            .title("End")
+                            .icon(getMarkerIcon(Color.parseColor("#D70000")))
+                    )
+                }
 
-                // Add markers for uploaded images
-                for (pathPoint in history.pathPoints) {
+                // Add image markers
+                history.pathPoints.forEach { pathPoint ->
                     pathPoint.imageUrl?.let { imageUrl ->
                         createCustomMarker(imageUrl) { bitmapDescriptor ->
-                            // Ensure marker is added on the main thread
                             itemView.post {
                                 map.addMarker(
                                     MarkerOptions()
                                         .position(LatLng(pathPoint.lat, pathPoint.lng))
-                                        .icon(bitmapDescriptor) // Use the custom marker
+                                        .icon(bitmapDescriptor)
                                 )
                             }
                         }
                     }
                 }
+
             }
         }
 
@@ -172,6 +196,22 @@ class HistoryAdapter(
         }
     }
 
+    private fun cleanupMapResources(position: Int) {
+        // Clear the specific map
+        maps[position]?.clear()
+
+        // Remove map reference
+        maps.remove(position)
+
+        // Destroy MapView
+        mapViews[position]?.let { mapView ->
+            mapView.onDestroy()
+        }
+
+        // Remove MapView reference
+        mapViews.remove(position)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.history_item, parent, false)
@@ -188,5 +228,14 @@ class HistoryAdapter(
         historyList.removeAt(position)
         notifyItemRemoved(position)
         notifyItemRangeChanged(position, historyList.size)
+    }
+
+    // Clean up all maps when adapter is destroyed
+    fun cleanup() {
+        mapViews.forEach { (_, mapView) ->
+            mapView.onDestroy()
+        }
+        mapViews.clear()
+        maps.clear()
     }
 }

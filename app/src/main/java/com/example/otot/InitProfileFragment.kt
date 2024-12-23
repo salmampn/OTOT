@@ -120,7 +120,10 @@ class InitProfileFragment : Fragment() {
             firestore.collection("users").document(user.uid).get()
                 .addOnSuccessListener { document ->
                     if (document != null) {
-                        nameInput.setText(document.getString("name"))
+                        val name = document.getString("name")
+                        if (!name.isNullOrEmpty()) {
+                            nameInput.setText(name)
+                        }
                         usernameInput.setText(document.getString("username"))
 
                         // Load profile image if it exists
@@ -140,7 +143,11 @@ class InitProfileFragment : Fragment() {
                     }
                 }
                 .addOnFailureListener { exception ->
-                    Toast.makeText(context, "Failed to load data: ${exception.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "Failed to load data: ${exception.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
         }
     }

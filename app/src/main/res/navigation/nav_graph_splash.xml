@@ -40,6 +40,9 @@
             app:destination="@id/signupFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"/>
+        <action
+            android:id="@+id/action_loginFragment_to_initProfileFragment"
+            app:destination="@id/initProfileFragment" />
     </fragment>
     <fragment
         android:id="@+id/signupFragment"
