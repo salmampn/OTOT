@@ -108,10 +108,7 @@ class HistoryAdapter(
                         map.moveCamera(CameraUpdateFactory.newLatLngZoom(pathPoints[0], 15f))
                     }
                 }
-
-//                val bounds = boundsBuilder.build()
-//                map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
-
+                
                 // Add start marker
                 if (pathPoints.isNotEmpty()) {
                     map.addMarker(
@@ -130,24 +127,6 @@ class HistoryAdapter(
                     )
                 }
 
-//                // Add start marker
-//                val startLatLng = pathPoints.first()
-//                map.addMarker(
-//                    MarkerOptions()
-//                        .position(startLatLng)
-//                        .title("Start")
-//                        .icon(getMarkerIcon(Color.parseColor("#F2801F")))
-//                )
-//
-//                // Add end marker
-//                val endLatLng = pathPoints.last()
-//                map.addMarker(
-//                    MarkerOptions()
-//                        .position(endLatLng)
-//                        .title("End")
-//                        .icon(getMarkerIcon(Color.parseColor("#D70000")))
-//                )
-
                 // Add image markers
                 history.pathPoints.forEach { pathPoint ->
                     pathPoint.imageUrl?.let { imageUrl ->
@@ -163,21 +142,6 @@ class HistoryAdapter(
                     }
                 }
 
-//                // Add markers for uploaded images
-//                for (pathPoint in history.pathPoints) {
-//                    pathPoint.imageUrl?.let { imageUrl ->
-//                        createCustomMarker(imageUrl) { bitmapDescriptor ->
-//                            // Ensure marker is added on the main thread
-//                            itemView.post {
-//                                map.addMarker(
-//                                    MarkerOptions()
-//                                        .position(LatLng(pathPoint.lat, pathPoint.lng))
-//                                        .icon(bitmapDescriptor) // Use the custom marker
-//                                )
-//                            }
-//                        }
-//                    }
-//                }
             }
         }
 
