@@ -1,38 +1,33 @@
 package com.example.otot
 
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.Color
-import android.net.Uri
-import android.os.Bundle
-import android.os.Looper
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
 import android.Manifest
 import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.provider.MediaStore
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -41,19 +36,12 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.example.otot.model.PathPoint
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.*
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -78,7 +66,7 @@ class PauseRunningFragment : Fragment() {
     private var seconds = 0
     private var trackingService: TrackingService? = null
     private var bound = false
-    private var lastKnownLatLng: LatLng? = null // Variable to store the last known coordinates
+    private var lastKnownLatLng: LatLng? = null
 
     private val runnable = object : Runnable {
         override fun run() {
@@ -134,7 +122,6 @@ class PauseRunningFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_pause_running, container, false)
         btnFinish = view.findViewById(R.id.btnFinish)
         btnPause = view.findViewById(R.id.btnPause)
@@ -153,14 +140,14 @@ class PauseRunningFragment : Fragment() {
                     LatLng(0.0, 0.0),
                     1f
                 )
-            ) // Default position
+            )
             startLocationUpdates(googleMap)
         }
 
         btnFinish.setOnClickListener {
             tracking = false
             if (runId == null) {
-                runId = saveRunData() // Save run data and get runId
+                runId = saveRunData()
             }
             val bundle = Bundle().apply {
                 putString("runId", runId)
@@ -181,10 +168,34 @@ class PauseRunningFragment : Fragment() {
             if (tracking) {
                 togglePause()
             }
-            showImageSelectionDialog()
+            checkCameraPermission()
         }
 
         return view
+    }
+
+    private fun animateButton(button: View) {
+        val scaleAnimation = ScaleAnimation(
+            1f, 0.9f,
+            1f, 0.9f,
+            Animation.RELATIVE_TO_SELF, 0.5f,
+            Animation.RELATIVE_TO_SELF, 0.5f
+        )
+        scaleAnimation.duration = 100
+        scaleAnimation.fillAfter = true
+        scaleAnimation.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation?) {}
+            override fun onAnimationEnd(animation: Animation?) {
+                button.startAnimation(ScaleAnimation(
+                    0.9f, 1f,
+                    0.9f, 1f,
+                    Animation.RELATIVE_TO_SELF, 0.5f,
+                    Animation.RELATIVE_TO_SELF, 0.5f
+                ).apply { duration = 100 })
+            }
+            override fun onAnimationRepeat(animation: Animation?) {}
+        })
+        button.startAnimation(scaleAnimation)
     }
 
     private fun startLocationUpdates(googleMap: GoogleMap) {
@@ -202,7 +213,6 @@ class PauseRunningFragment : Fragment() {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // Request permissions if not granted
             ActivityCompat.requestPermissions(
                 requireActivity(),
                 arrayOf(
@@ -220,8 +230,7 @@ class PauseRunningFragment : Fragment() {
                 if (tracking) {
                     for (location in locationResult.locations) {
                         val latLng = LatLng(location.latitude, location.longitude)
-                        lastKnownLatLng = latLng // Update the last known coordinates
-                        // Create a PathPoint object and add it to the list
+                        lastKnownLatLng = latLng
                         val pathPoint = PathPoint(
                             lat = location.latitude,
                             lng = location.longitude,
@@ -248,7 +257,7 @@ class PauseRunningFragment : Fragment() {
             tracking = true
             btnPause.setImageResource(R.drawable.pause_button)
             trackingService?.startTimer()
-            handler.post(runnable) // Restart the timer when resuming
+            handler.post(runnable)
         }
     }
 
@@ -256,9 +265,9 @@ class PauseRunningFragment : Fragment() {
         val duration = tvTime.text
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return ""
         val runId = this.runId ?: FirebaseFirestore.getInstance().collection("history")
-            .document().id // Use existing runId
+            .document().id
 
-        val timestamp = com.google.firebase.Timestamp.now()
+        val timestamp = Timestamp.now()
 
         val runData = mapOf(
             "userId" to userId,
@@ -269,7 +278,7 @@ class PauseRunningFragment : Fragment() {
                     "lng" to it.lng,
                     "imageUrl" to it.imageUrl,
                     "caption" to it.caption
-                ) // Save images and the caption to the respective PathPoint objects
+                )
             },
             "distance" to calculateDistance(),
             "avgPace" to calculateAveragePace(),
@@ -277,7 +286,6 @@ class PauseRunningFragment : Fragment() {
             "timestamp" to timestamp
         )
 
-        // Save the run data to Firestore
         FirebaseFirestore.getInstance().collection("history").document(runId).set(runData)
             .addOnSuccessListener {
                 Toast.makeText(requireContext(), "Run data saved successfully", Toast.LENGTH_SHORT)
@@ -309,7 +317,7 @@ class PauseRunningFragment : Fragment() {
             )
             distance += result[0]
         }
-        return (distance / 1000.0) // Convert to kilometers
+        return (distance / 1000.0)
     }
 
     private fun calculateCalories(): Double {
@@ -319,9 +327,9 @@ class PauseRunningFragment : Fragment() {
     }
 
     private fun calculateAveragePace(): Double {
-        val distance = calculateDistance() // in kilometers
+        val distance = calculateDistance()
         if (seconds == 0) return 0.0
-        val pace = (seconds / 60.0) / distance // minute per kilometer
+        val pace = (seconds / 60.0) / distance
         return pace
     }
 
@@ -345,7 +353,7 @@ class PauseRunningFragment : Fragment() {
         }
 
         dialog.show()
-        dialog.setCanceledOnTouchOutside(true) // Allow dialog to close when touching outside
+        dialog.setCanceledOnTouchOutside(true)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
@@ -403,18 +411,18 @@ class PauseRunningFragment : Fragment() {
 
         retakeButton.setOnClickListener {
             dialog.dismiss()
-            showImageSelectionDialog() // Show the selection dialog again
+            showImageSelectionDialog()
         }
 
         uploadButton.setOnClickListener {
             dialog.dismiss()
             val caption = captionEditText.text.toString()
-            uploadImageToFirebase(image, userId, caption) // Upload the image to Firebase
+            uploadImageToFirebase(image, userId, caption)
             togglePause()
         }
 
         dialog.show()
-        dialog.setCanceledOnTouchOutside(true) // Allow dialog to close when touching outside
+        dialog.setCanceledOnTouchOutside(true)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
@@ -433,48 +441,44 @@ class PauseRunningFragment : Fragment() {
 
         retakeButton.setOnClickListener {
             dialog.dismiss()
-            showImageSelectionDialog() // Show the selection dialog again
+            showImageSelectionDialog()
         }
 
         uploadButton.setOnClickListener {
             dialog.dismiss()
             val caption = captionEditText.text.toString()
-            uploadImageToFirebase(imageUri, userId, caption) // Upload the image to Firebase
+            uploadImageToFirebase(imageUri, userId, caption)
             togglePause()
         }
 
         dialog.show()
-        dialog.setCanceledOnTouchOutside(true) // Allow dialog to close when touching outside
+        dialog.setCanceledOnTouchOutside(true)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
     private fun uploadImageToFirebase(image: Bitmap, userId: String, caption: String) {
-        // Use a timestamp to create a unique filename for each image
         val timestamp = System.currentTimeMillis()
         val storageRef = FirebaseStorage.getInstance().reference
-            .child("images/$userId/$timestamp.jpg") // Use timestamp for uniqueness
+            .child("images/$userId/$timestamp.jpg")
 
         val baos = ByteArrayOutputStream()
-        image.compress(Bitmap.CompressFormat.JPEG, 100, baos) // No compression
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val data = baos.toByteArray()
 
         val uploadTask = storageRef.putBytes(data)
         uploadTask.addOnSuccessListener {
-            // Get the download URL after the upload is successful
             storageRef.downloadUrl.addOnSuccessListener { uri ->
-                // Update the imageUrl in the last PathPoint after successful upload
                 if (pathPoints.isNotEmpty()) {
-                    pathPoints.last().imageUrl = uri.toString() // Get the download URL
+                    pathPoints.last().imageUrl = uri.toString()
                     pathPoints.last().caption =
-                        if (caption.isEmpty()) "Checkpoint" else caption // Set caption to "Checkpoint" if empty
+                        if (caption.isEmpty()) "Checkpoint" else caption
                 }
-                // Add a marker at the last known coordinates
                 lastKnownLatLng?.let { latLng ->
                     addMarkerAtLocation(
                         latLng,
                         uri.toString(),
                         caption
-                    ) // Add marker with the image URL
+                    )
                 }
                 Toast.makeText(requireContext(), "Image uploaded successfully", Toast.LENGTH_SHORT)
                     .show()
@@ -492,28 +496,24 @@ class PauseRunningFragment : Fragment() {
     }
 
     private fun uploadImageToFirebase(imageUri: Uri, userId: String, caption: String) {
-        // Use a timestamp to create a unique filename for each image
         val timestamp = System.currentTimeMillis()
         val storageRef = FirebaseStorage.getInstance().reference
-            .child("images/$userId/$timestamp.jpg") // Use timestamp for uniqueness
+            .child("images/$userId/$timestamp.jpg")
 
         val uploadTask = storageRef.putFile(imageUri)
         uploadTask.addOnSuccessListener {
-            // Get the download URL after the upload is successful
             storageRef.downloadUrl.addOnSuccessListener { uri ->
-                // Update the imageUrl in the last PathPoint after successful upload
                 if (pathPoints.isNotEmpty()) {
-                    pathPoints.last().imageUrl = uri.toString() // Get the download URL
+                    pathPoints.last().imageUrl = uri.toString()
                     pathPoints.last().caption =
-                        if (caption.isEmpty()) "Checkpoint" else caption // Set caption to "Checkpoint" if empty
+                        if (caption.isEmpty()) "Checkpoint" else caption
                 }
-                // Add a marker at the last known coordinates
                 lastKnownLatLng?.let { latLng ->
                     addMarkerAtLocation(
                         latLng,
                         imageUri.toString(),
                         caption
-                    ) // Add marker with the image URL
+                    )
                 }
                 Toast.makeText(requireContext(), "Image uploaded successfully", Toast.LENGTH_SHORT)
                     .show()
@@ -531,17 +531,15 @@ class PauseRunningFragment : Fragment() {
     }
 
     private fun addMarkerAtLocation(latLng: LatLng, imageUri: String, caption: String?) {
-        // Add a marker at the last known coordinates
         val markerTitle = if (caption.isNullOrEmpty()) "Checkpoint" else caption
         createCustomMarker(imageUri) { bitmapDescriptor ->
-            // Ensure this runs on the main thread
             requireActivity().runOnUiThread {
                 mapView.getMapAsync { map ->
                     map.addMarker(
                         MarkerOptions()
                             .position(latLng)
                             .title(markerTitle)
-                            .icon(bitmapDescriptor) // Use the custom marker
+                            .icon(bitmapDescriptor)
                     )
                 }
             }
@@ -552,10 +550,9 @@ class PauseRunningFragment : Fragment() {
         val markerView = LayoutInflater.from(requireContext()).inflate(R.layout.custom_marker, null)
         val imageView = markerView.findViewById<ImageView>(R.id.marker_image)
 
-        // Load the image using Glide
         Glide.with(requireContext())
             .load(imageUrl)
-            .apply(RequestOptions.circleCropTransform()) // Apply circular crop
+            .apply(RequestOptions.circleCropTransform())
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,
@@ -563,7 +560,6 @@ class PauseRunningFragment : Fragment() {
                     target: Target<Drawable>?,
                     isFirstResource: Boolean
                 ): Boolean {
-                    // Handle the error (optional)
                     return false
                 }
 
@@ -574,10 +570,7 @@ class PauseRunningFragment : Fragment() {
                     dataSource: DataSource?,
                     isFirstResource: Boolean
                 ): Boolean {
-                    // Set the loaded image into the ImageView
                     imageView.setImageDrawable(resource)
-
-                    // Create a bitmap from the marker view
                     markerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
                     markerView.layout(0, 0, markerView.measuredWidth, markerView.measuredHeight)
                     val bitmap = Bitmap.createBitmap(
@@ -587,13 +580,24 @@ class PauseRunningFragment : Fragment() {
                     )
                     val canvas = Canvas(bitmap)
                     markerView.draw(canvas)
-
-                    // Call the callback with the created bitmap descriptor
                     callback(BitmapDescriptorFactory.fromBitmap(bitmap))
                     return true
                 }
             })
-            .submit() // Ensure the image is loaded
+            .submit()
+    }
+
+    private fun checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.CAMERA),
+                CAMERA_PERMISSION_REQUEST_CODE
+            )
+        } else {
+            openCamera()
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -602,7 +606,16 @@ class PauseRunningFragment : Fragment() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == CAMERA_REQUEST_CODE) {
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                mapView.getMapAsync { googleMap ->
+                    startLocationUpdates(googleMap)
+                }
+            } else {
+                Toast.makeText(requireContext(), "Location permission denied", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        } else if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 openCamera()
             } else {
@@ -610,39 +623,6 @@ class PauseRunningFragment : Fragment() {
                     .show()
             }
         }
-    }
-
-    private fun animateButton(button: View) {
-        val scaleAnimation = ScaleAnimation(
-            1f, 0.9f, // Start and end scale for X axis
-            1f, 0.9f, // Start and end scale for Y axis
-            Animation.RELATIVE_TO_SELF, 0.5f, // Pivot point X
-            Animation.RELATIVE_TO_SELF, 0.5f // Pivot point Y
-        )
-        scaleAnimation.duration = 100 // Duration of the animation
-        scaleAnimation.fillAfter = true // Keep the end state of the animation
-        scaleAnimation.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation?) {
-                // Optional: Do something when the animation starts
-            }
-
-            override fun onAnimationEnd(animation: Animation?) {
-                // Reset the button scale back to normal
-                button.startAnimation(ScaleAnimation(
-                    0.9f, 1f, // Start and end scale for X axis
-                    0.9f, 1f, // Start and end scale for Y axis
-                    Animation.RELATIVE_TO_SELF, 0.5f, // Pivot point X
-                    Animation.RELATIVE_TO_SELF, 0.5f // Pivot point Y
-                ).apply {
-                    duration = 100
-                })
-            }
-
-            override fun onAnimationRepeat(animation: Animation?) {
-                // Optional: Do something when the animation repeats
-            }
-        })
-        button.startAnimation(scaleAnimation)
     }
 
     override fun onResume() {
@@ -674,5 +654,7 @@ class PauseRunningFragment : Fragment() {
     companion object {
         private const val CAMERA_REQUEST_CODE = 1002
         private const val GALLERY_REQUEST_CODE = 1003
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
+        private const val CAMERA_PERMISSION_REQUEST_CODE = 1004
     }
 }

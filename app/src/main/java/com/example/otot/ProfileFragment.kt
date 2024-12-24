@@ -20,15 +20,13 @@ import com.bumptech.glide.Glide
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.GoogleAuthProvider
 
 class ProfileFragment : Fragment() {
 
@@ -71,9 +69,43 @@ class ProfileFragment : Fragment() {
         btnLogout.setOnClickListener { showLogoutDialog() }
         btnDeleteAccount.setOnClickListener { showDeleteAccountDialog() }
         btnEditProfile.setOnClickListener { findNavController().navigate(R.id.action_profileFragment_to_editprofileFragment) }
-        btnChangePassword.setOnClickListener { findNavController().navigate(R.id.action_profileFragment_to_changePasswordFragment) }
+        btnChangePassword.setOnClickListener { checkIfGoogleSignIn() }
 
         return view
+    }
+
+    private fun checkIfGoogleSignIn() {
+        val user = firebaseAuth.currentUser
+        if (user != null) {
+            for (profile in user.providerData) {
+                if (profile.providerId == GoogleAuthProvider.PROVIDER_ID) {
+                    showAlert()
+                    return
+                }
+            }
+            // Navigate to ChangePasswordFragment if not signed in with Google
+            findNavController().navigate(R.id.action_profileFragment_to_changePasswordFragment)
+        }
+    }
+
+    private fun showAlert() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_google_signin_alert, null)
+        val builder = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(false)
+
+        val dialog: AlertDialog = builder.create()
+
+        dialogView.findViewById<Button>(R.id.btn_ok).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+        dialog.setCanceledOnTouchOutside(true)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.window?.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
+        dialog.window?.setGravity(Gravity.BOTTOM)
     }
 
     private fun showLogoutDialog() {
@@ -410,6 +442,7 @@ class ProfileFragment : Fragment() {
             tvEmail.text = "No email found"
         }
     }
+
     companion object {
         private const val RC_SIGN_IN = 9001
     }
