@@ -1,5 +1,9 @@
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/8043bb1b-2d13-41df-87b9-1eab4ac8ddb9" width=128/>
+</p>
 <h1 align="center" id="title">OTOT</h1>
 Aplikasi OTOT adalah solusi inovatif bagi para pelari yang ingin meningkatkan kebugaran dan kinerja mereka. Dengan desain antarmuka yang intuitif, aplikasi ini menawarkan pengalaman menyeluruh dalam pelacakan aktivitas lari. OTOT membantu pengguna memahami kebiasaan berlari mereka melalui analisis mendalam dan fitur yang mendukung pencapaian tujuan kebugaran. Dengan kemudahan akses melalui fitur login, OTOT menjadi mitra setia dalam perjalanan kebugaran pengguna.
+
 
 <h2>🧑‍💻 Authors 👩‍💻</h2>
 
@@ -44,6 +48,12 @@ Fitur-fitur yang sudah diimplementasikan:
 
 <h2> 🏃‍♂️‍➡️ Database </h2>
 OTOT dibuat dengan menggunakan Firebase yang terdiri dari 2 relational database untuk menyimpan user dan history lari. 
+
+<h2>📸 Project Screenshots </h2>
+
+<img src="https://github.com/user-attachments/assets/cf1a767b-e34f-4e5e-8904-5d3c7c47cc35" alt="home" width=148/ >
+<img src="https://github.com/user-attachments/assets/b48d4a89-208d-4d51-a694-56f42ee1b2f2" alt="track" width=148/>
+<img src="https://github.com/user-attachments/assets/f8f87a49-9624-4000-b3ae-d643c3f924e9" alt="history detail" width=148/>
 
 <h2>💻 Built with</h2>
 Teknologi yang digunakan di projek ini:
