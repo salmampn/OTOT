@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/confirmation_background"
+    android:layout_gravity="center">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:fontFamily="@font/roboto_bold"
+        android:layout_gravity="left"
+        android:layout_marginBottom="8dp"
+        android:text="Change Password"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Password change is not allowed for Google sign-in users"
+        android:layout_gravity="start"
+        android:layout_marginBottom="16dp"
+        android:textSize="16dp"
+        android:textColor="@color/white_80_percent"/>
+
+    <Button
+        android:id="@+id/btn_ok"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="@font/roboto_bold"
+        android:textAllCaps="false"
+        android:textSize="16sp"
+        android:text="OK"
+        android:background="@drawable/confirm_button"
+        android:textColor="@color/white" />
+</LinearLayout>

@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 
 class ChangePasswordFragment : Fragment() {
     private lateinit var currentPasswordEditText: EditText
@@ -61,31 +62,39 @@ class ChangePasswordFragment : Fragment() {
 
         // Mendapatkan user saat ini
         val user = auth.currentUser
-        if (user != null && user.email != null) {
-            // Log email dan password saat ini
-            Log.d("ChangePasswordFragment", "Current User Email: ${user.email}")
-            Log.d("ChangePasswordFragment", "Current Password: $currentPassword")
-
-            // Membuat credential untuk reauthentication
-            val credential = EmailAuthProvider.getCredential(user.email!!, currentPassword)
-            user.reauthenticate(credential).addOnCompleteListener { reauthTask ->
-                if (reauthTask.isSuccessful) {
-                    // Jika reauthentication berhasil, update password
-                    user.updatePassword(newPassword).addOnCompleteListener { updateTask ->
-                        if (updateTask.isSuccessful) {
-                            Toast.makeText(activity, "Password changed successfully", Toast.LENGTH_SHORT).show()
-                            findNavController().navigate(R.id.action_changePasswordFragment_to_profileFragment)
-                        } else {
-                            Toast.makeText(activity, "Failed to update password", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                } else {
-                    Toast.makeText(activity, "Authentication failed: ${reauthTask.exception?.message}", Toast.LENGTH_SHORT).show()
+        if (user != null) {
+            for (profile in user.providerData) {
+                if (profile.providerId == GoogleAuthProvider.PROVIDER_ID) {
+                    Toast.makeText(activity, "Password change is not allowed for Google sign-in users", Toast.LENGTH_SHORT).show()
+                    return
                 }
             }
-        } else {
-            Toast.makeText(activity, "User not logged in", Toast.LENGTH_SHORT).show()
+
+            if (user.email != null) {
+                // Log email dan password saat ini
+                Log.d("ChangePasswordFragment", "Current User Email: ${user.email}")
+                Log.d("ChangePasswordFragment", "Current Password: $currentPassword")
+
+                // Membuat credential untuk reauthentication
+                val credential = EmailAuthProvider.getCredential(user.email!!, currentPassword)
+                user.reauthenticate(credential).addOnCompleteListener { reauthTask ->
+                    if (reauthTask.isSuccessful) {
+                        // Jika reauthentication berhasil, update password
+                        user.updatePassword(newPassword).addOnCompleteListener { updateTask ->
+                            if (updateTask.isSuccessful) {
+                                Toast.makeText(activity, "Password changed successfully", Toast.LENGTH_SHORT).show()
+                                findNavController().navigate(R.id.action_changePasswordFragment_to_profileFragment)
+                            } else {
+                                Toast.makeText(activity, "Failed to update password", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    } else {
+                        Toast.makeText(activity, "Authentication failed: ${reauthTask.exception?.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } else {
+                Toast.makeText(activity, "User not logged in", Toast.LENGTH_SHORT).show()
+            }
         }
     }
-
 }

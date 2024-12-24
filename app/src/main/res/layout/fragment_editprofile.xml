@@ -81,7 +81,7 @@
             android:id="@+id/et_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="2dp"
             android:background="@drawable/edit_profile_form"
             android:hint="Latin alphabet, no emoji or symbols"
             android:textColor="@color/black"
@@ -91,7 +91,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="16dp"
             android:text="Username"
             android:fontFamily="@font/roboto_medium"/>
 
@@ -99,7 +99,7 @@
             android:id="@+id/et_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="2dp"
             android:background="@drawable/edit_profile_form"
             android:hint="8-12 characters, no space" />
 
@@ -107,7 +107,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="16dp"
             android:text="Gender"
             android:fontFamily="@font/roboto_medium"/>
 
@@ -115,7 +115,7 @@
             android:id="@+id/spinner_gender"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="2dp"
             android:background="@drawable/edit_profile_form"
             android:entries="@array/gender_options"
             android:fontFamily="@font/roboto_bold"/>
