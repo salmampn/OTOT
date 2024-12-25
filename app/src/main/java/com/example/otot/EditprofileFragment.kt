@@ -21,51 +21,63 @@ import com.google.firebase.storage.FirebaseStorage
 import java.io.ByteArrayOutputStream
 import java.util.*
 
+/**
+ * Fragment untuk mengedit profil pengguna.
+ */
 class EditprofileFragment : Fragment() {
 
+    // Deklarasi variabel untuk elemen UI
     private lateinit var etName: EditText
     private lateinit var etUsername: EditText
     private lateinit var spinnerGender: Spinner
     private lateinit var btnSave: TextView
     private lateinit var profileImage: ImageView
 
+    // Inisialisasi Firebase Firestore, Auth, dan Storage
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
     private val storage = FirebaseStorage.getInstance()
 
+    // Variabel untuk ProgressBar dan overlay loading
     private lateinit var progressBar: ProgressBar
     private lateinit var loadingOverlay: View
 
+    // Konstanta untuk permintaan pemilihan gambar
     private val PICK_IMAGE_REQUEST = 1
 
-    private var imageUri: Uri? = null // To store the selected image URI
-    private var existingImageUrl: String? = null // To store the existing image URL from the database
+    // Variabel untuk menyimpan URI gambar yang dipilih dan URL gambar yang ada
+    private var imageUri: Uri? = null
+    private var existingImageUrl: String? = null
 
+    /**
+     * Memanggil saat fragment dibuat.
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_editprofile, container, false)
 
-        // Initialize views
+        // Inisialisasi elemen UI
         etName = view.findViewById(R.id.et_name)
         etUsername = view.findViewById(R.id.et_username)
         spinnerGender = view.findViewById(R.id.spinner_gender)
         btnSave = view.findViewById(R.id.btn_save)
         profileImage = view.findViewById(R.id.profile_image)
 
-        // Initialize the ProgressBar and loading overlay
+        // Inisialisasi ProgressBar dan overlay loading
         progressBar = view.findViewById(R.id.progressBar)
         loadingOverlay = view.findViewById(R.id.loading_overlay)
 
-        profileImage.setOnClickListener{
+        // Set listener untuk gambar profil
+        profileImage.setOnClickListener {
             openGallery()
         }
 
-        // Load data from Firestore
+        // Memuat data pengguna dari Firestore
         loadUserData()
 
-        // Set save button click listener
+        // Set listener untuk tombol simpan
         btnSave.setOnClickListener {
             saveProfile(
                 etName.text.toString(),
@@ -76,34 +88,38 @@ class EditprofileFragment : Fragment() {
         return view
     }
 
+    /**
+     * Memuat data pengguna dari Firestore.
+     */
     private fun loadUserData() {
         val currentUser = auth.currentUser
         currentUser?.let { user ->
             db.collection("users").document(user.uid).get()
                 .addOnSuccessListener { document ->
                     if (document != null) {
+                        // Mengisi EditText dengan data yang ada
                         etName.setText(document.getString("name"))
                         etUsername.setText(document.getString("username"))
 
-                        // Set spinner selection based on gender
+                        // Mengatur pemilihan spinner berdasarkan gender
                         val gender = document.getString("gender")
                         val genderPosition = resources.getStringArray(R.array.gender_options).indexOf(gender)
                         spinnerGender.setSelection(genderPosition)
 
-                        // Load profile image if it exists
+                        // Memuat gambar profil jika ada
                         existingImageUrl = document.getString("profileImageUrl")
 
                         Log.e("ExistingImageUrl: $existingImageUrl", "user: ${user.uid}")
                         if (!existingImageUrl.isNullOrEmpty()) {
                             Glide.with(this)
                                 .load(existingImageUrl)
-                                .placeholder(R.drawable.circle_profile) // Placeholder image
-                                .error(R.drawable.default_profile)  // Error image
+                                .placeholder(R.drawable.circle_profile) // Gambar placeholder
+                                .error(R.drawable.default_profile)  // Gambar error
                                 .centerInside()
                                 .circleCrop()
                                 .into(profileImage)
                         } else {
-                            profileImage.setImageResource(R.drawable.circle_profile) // Default image if no profile picture
+                            profileImage.setImageResource(R.drawable.circle_profile) // Gambar default jika tidak ada gambar profil
                         }
                     } else {
                         Toast.makeText(context, "No data found!", Toast.LENGTH_SHORT).show()
@@ -115,11 +131,17 @@ class EditprofileFragment : Fragment() {
         }
     }
 
+    /**
+     * Membuka galeri untuk memilih gambar.
+     */
     private fun openGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         startActivityForResult(intent, PICK_IMAGE_REQUEST)
     }
 
+    /**
+     * Menangani hasil pemilihan gambar dari galeri.
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -127,24 +149,27 @@ class EditprofileFragment : Fragment() {
             imageUri = data.data!!
             Glide.with(this)
                 .load(imageUri)
-                .placeholder(R.drawable.circle_profile) // Add a placeholder image in your resources
-                .error(R.drawable.default_profile)  // Add an error image in your resources
+                .placeholder(R.drawable.circle_profile) // Gambar placeholder
+                .error(R.drawable.default_profile)  // Gambar error
                 .centerInside()
-                .circleCrop()  // Optional, if you want to crop the image into a circular shape
+                .circleCrop()  // Memotong gambar menjadi bentuk lingkaran
                 .into(profileImage)
         }
     }
 
+    /**
+     * Menyimpan profil pengguna.
+     */
     private fun saveProfile(name: String, username: String, selectedGender: String) {
         val currentUser = auth.currentUser
         if (currentUser != null) {
             if (imageUri != null) {
-                // If user selected an image, upload it
+                // Jika pengguna memilih gambar, unggah gambar tersebut
                 loadingOverlay.visibility = View.VISIBLE
                 progressBar.visibility = View.VISIBLE
                 uploadImageToStorage(name, username, selectedGender)
             } else {
-                // If no new image selected, save data with existing image URL
+                // Jika tidak ada gambar baru yang dipilih, simpan data dengan URL gambar yang ada
                 saveProfileData(name, username, selectedGender, existingImageUrl)
             }
         } else {
@@ -152,6 +177,9 @@ class EditprofileFragment : Fragment() {
         }
     }
 
+    /**
+     * Mengunggah gambar ke Firebase Storage.
+     */
     private fun uploadImageToStorage(name: String, username: String, selectedGender: String) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         Log.e("UploadImage", "User ID: $userId")
@@ -165,16 +193,16 @@ class EditprofileFragment : Fragment() {
             return
         }
 
-        // Compress the image
+        // Mengompres gambar
         val compressedImage = compressImage(imageUri!!)
 
-        // Use the userId in the path
+        // Menggunakan userId dalam path
         val storageRef = storage.reference.child("profile_pictures/${userId}_profile.jpg")
 
         storageRef.putFile(imageUri!!)
             .addOnSuccessListener {
                 storageRef.downloadUrl.addOnSuccessListener { uri ->
-                    // Get the download URL and save the profile data
+                    // Mendapatkan URL unduhan dan menyimpan data profil
                     saveProfileData(name, username, selectedGender, uri.toString())
                 }
             }
@@ -186,29 +214,35 @@ class EditprofileFragment : Fragment() {
             }
     }
 
+    /**
+     * Mengompres gambar untuk mengurangi ukuran file.
+     */
     private fun compressImage(uri: Uri): ByteArray {
-        // Decode the image to a Bitmap
+        // Mendekode gambar menjadi Bitmap
         val originalBitmap = BitmapFactory.decodeStream(imageUri?.let {
             requireContext().contentResolver.openInputStream(
                 it
             )
         })
 
-        // Set the initial quality
+        // Mengatur kualitas awal
         var quality = 100
         var stream = ByteArrayOutputStream()
         originalBitmap.compress(Bitmap.CompressFormat.JPEG, quality, stream)
 
-        // Check the size and compress if necessary
-        while (stream.toByteArray().size > 500 * 1024 && quality > 50) { // 300 KB
-            stream.reset() // Reset the stream
-            quality -= 50 // Decrease quality
+        // Memeriksa ukuran dan mengompres jika perlu
+        while (stream.toByteArray().size > 500 * 1024 && quality > 50) { // 500 KB
+            stream.reset() // Mengatur ulang stream
+            quality -= 50 // Mengurangi kualitas
             originalBitmap.compress(Bitmap.CompressFormat.JPEG, quality, stream)
         }
 
-        return stream.toByteArray() // Return the compressed image as ByteArray
+        return stream.toByteArray() // Mengembalikan gambar yang dikompres sebagai ByteArray
     }
 
+    /**
+     * Menyimpan data profil pengguna ke Firestore.
+     */
     private fun saveProfileData(name: String, username: String, selectedGender: String, imageUrl: String?) {
         val userId = auth.currentUser?.uid
 

@@ -62,12 +62,14 @@ class HistoryFragment : Fragment() {
         loadHistory()
     }
 
+    // Redirect to SplashActivity if user is not logged in
     private fun redirectToSplash() {
         val intent = Intent(requireContext(), SplashActivity::class.java)
         startActivity(intent)
         activity?.finish()
     }
 
+    // Load history data from Firestore
     private fun loadHistory() {
         val currentUserId = auth.currentUser?.uid ?: return
         firestore.collection("history")
@@ -130,6 +132,7 @@ class HistoryFragment : Fragment() {
             }
     }
 
+    // Update UI based on historyList
     private fun updateUI() {
         if (historyList.isEmpty()) {
             recyclerView.visibility = View.GONE
@@ -141,6 +144,7 @@ class HistoryFragment : Fragment() {
         }
     }
 
+    // Show delete confirmation dialog
     private fun showDeleteConfirmationHistory(position: Int) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_delete_history_confirmation, null)
         val dialogBuilder = AlertDialog.Builder(requireContext())

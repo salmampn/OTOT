@@ -43,11 +43,13 @@ class StartRunningFragment : Fragment(), OnMapReadyCallback {
         return view
     }
 
+    // Initialize the map
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         getCurrentLocation()
     }
 
+    // Get the current location of the device
     private fun getCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
@@ -76,6 +78,7 @@ class StartRunningFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    // Lifecycle methods for the MapView
     override fun onResume() {
         super.onResume()
         mapView.onResume()

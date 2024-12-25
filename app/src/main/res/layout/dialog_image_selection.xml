@@ -6,6 +6,7 @@
     android:background="@drawable/confirmation_background"
     android:padding="16dp">
 
+    <!-- The title of the dialog -->
     <TextView
         android:id="@+id/dialog_title"
         android:layout_width="wrap_content"
@@ -16,6 +17,7 @@
         android:textColor="@color/white"
         android:layout_gravity="left"/>
 
+    <!-- The buttons to take a picture or upload the image -->
     <Button
         android:id="@+id/take_picture_button"
         android:layout_width="match_parent"

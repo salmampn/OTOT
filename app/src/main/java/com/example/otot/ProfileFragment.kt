@@ -45,6 +45,7 @@ class ProfileFragment : Fragment() {
     private var fullname: String? = null
     private var email: String? = null
 
+    // Initialize views
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -74,6 +75,7 @@ class ProfileFragment : Fragment() {
         return view
     }
 
+    // Check if user is signed in with Google before changing password
     private fun checkIfGoogleSignIn() {
         val user = firebaseAuth.currentUser
         if (user != null) {
@@ -88,6 +90,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    // Show alert dialog for Google sign-in users
     private fun showAlert() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_google_signin_alert, null)
         val builder = AlertDialog.Builder(requireContext())
@@ -108,6 +111,7 @@ class ProfileFragment : Fragment() {
         dialog.window?.setGravity(Gravity.BOTTOM)
     }
 
+    // Show logout dialog
     private fun showLogoutDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_logout_confirmation, null)
         val builder = AlertDialog.Builder(requireContext())
@@ -141,6 +145,7 @@ class ProfileFragment : Fragment() {
         dialog.window?.setGravity(Gravity.BOTTOM)
     }
 
+    // Show delete account dialog
     private fun showDeleteAccountDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_delete_account_confirmation, null)
         val builder = AlertDialog.Builder(requireContext())
@@ -172,6 +177,7 @@ class ProfileFragment : Fragment() {
         dialog.window?.setGravity(Gravity.BOTTOM)
     }
 
+    // Prompt user to reauthenticate with Google
     private fun promptGoogleReauthentication() {
         val googleSignInClient = GoogleSignIn.getClient(requireContext(),
             GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -183,6 +189,7 @@ class ProfileFragment : Fragment() {
         startActivityForResult(googleSignInClient.signInIntent, RC_SIGN_IN)
     }
 
+    // Prompt user to reauthenticate with password
     private fun promptPasswordReauthentication() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_reauthenticate, null)
         val passwordInput = dialogView.findViewById<EditText>(R.id.password_input)
@@ -209,6 +216,7 @@ class ProfileFragment : Fragment() {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
+    // Reauthenticate user with password before deleting account
     private fun reauthenticateWithPassword(password: String) {
         val user = firebaseAuth.currentUser
         user?.let {
@@ -227,6 +235,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    // Handle Google sign-in result
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
@@ -252,6 +261,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    // Delete user account and associated data
     private fun deleteUserAccount() {
         val user = firebaseAuth.currentUser
         user?.let { firebaseUser ->
@@ -271,6 +281,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    // Delete user storage data
     private fun deleteUserStorage(uid: String) {
         val storageRef = FirebaseStorage.getInstance().reference
         val profilePicRef = storageRef.child("profile_pictures/${uid}_profile.jpg")
@@ -297,6 +308,7 @@ class ProfileFragment : Fragment() {
             }
     }
 
+    // Delete user images
     private fun deleteUserImages(uid: String) {
         val storageRef = FirebaseStorage.getInstance().reference
         val runsImagesRef = storageRef.child("images/$uid")
@@ -342,6 +354,7 @@ class ProfileFragment : Fragment() {
             }
     }
 
+    // Delete user runs
     private fun deleteUserRuns(uid: String) {
         firestore.collection("history").whereEqualTo("userId", uid).get()
             .addOnSuccessListener { querySnapshot ->
@@ -383,6 +396,7 @@ class ProfileFragment : Fragment() {
             }
     }
 
+    // Delete Firebase user account
     private fun deleteFirebaseUser() {
         val user = firebaseAuth.currentUser
         user?.delete()?.addOnCompleteListener { task ->
@@ -401,6 +415,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    // Load user profile data from Firestore
     private fun loadUserProfile() {
         val currentUser = firebaseAuth.currentUser
         currentUser?.let {
@@ -443,6 +458,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    // Handle Google sign-in result
     companion object {
         private const val RC_SIGN_IN = 9001
     }

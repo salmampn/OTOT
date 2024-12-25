@@ -114,6 +114,7 @@ class InitProfileFragment : Fragment() {
         }
     }
 
+    // Load user data from Firestore
     private fun loadUserData() {
         val currentUser = auth.currentUser
         currentUser?.let { user ->

@@ -39,6 +39,7 @@ class RunningActivity : AppCompatActivity(), OnMapReadyCallback {
     private var startTime: Long = 0
     private val routeCoordinates = ArrayList<LatLng>()
 
+    // Initialize the activity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_running)
@@ -72,6 +73,7 @@ class RunningActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    // Start running activity
     private fun startRunning() {
         isRunning = true
         startTime = System.currentTimeMillis()
@@ -81,6 +83,7 @@ class RunningActivity : AppCompatActivity(), OnMapReadyCallback {
         getLocationUpdates()
     }
 
+    // Stop running activity
     private fun stopRunning() {
         isRunning = false
         btnStart.visibility = View.VISIBLE
@@ -88,6 +91,7 @@ class RunningActivity : AppCompatActivity(), OnMapReadyCallback {
         // Stop the location tracking and save data if needed
     }
 
+    // Initialize the map
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
         MapsInitializer.initialize(this)
@@ -105,6 +109,7 @@ class RunningActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    // Enable location tracking on the map
     private fun enableLocationTracking() {
         if (ActivityCompat.checkSelfPermission(
                 this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {

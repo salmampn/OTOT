@@ -8,6 +8,7 @@
     android:background="#E9EDF0"
     tools:context=".RunningActivity">
 
+    <!-- The toolbar is the top bar of the app -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,6 +24,7 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
     </com.google.android.material.appbar.AppBarLayout>
 
+    <!-- The bottom navigation view is the bottom bar of the app -->
     <fragment
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"

@@ -7,6 +7,7 @@
     android:background="@drawable/confirmation_background"
     android:layout_gravity="center">
 
+    <!-- The title of the dialog -->
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
@@ -18,6 +19,7 @@
         android:text="Change Password"
         android:textColor="@color/white" />
 
+    <!-- The message of the dialog -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -27,6 +29,7 @@
         android:textSize="16dp"
         android:textColor="@color/white_80_percent"/>
 
+    <!-- The buttons to retake or upload the image -->
     <Button
         android:id="@+id/btn_ok"
         android:layout_width="match_parent"
