@@ -77,6 +77,7 @@ class HomeFragment : Fragment() {
         return view
     }
 
+    // Load the user profile data from Firestore
     private fun loadUserProfile() {
         val currentUser = auth.currentUser
         currentUser?.let { user ->
@@ -95,6 +96,7 @@ class HomeFragment : Fragment() {
         } ?: showToast("User not authenticated")
     }
 
+    // Load the user history data from Firestore
     private fun loadUserHistory() {
         val currentUser = auth.currentUser
         currentUser?.let { user ->
@@ -124,6 +126,7 @@ class HomeFragment : Fragment() {
         }
     }
 
+    // Load the last 3 activities from Firestore
     private fun loadLastActivities() {
         val currentUser = auth.currentUser
         currentUser?.let { user ->
@@ -165,6 +168,7 @@ class HomeFragment : Fragment() {
         }
     }
 
+    // Update the UI with the last 3 activities
     private fun updateLastActivitiesUI(lastActivities: List<LastActivity>) {
         lastActivityContainer.removeAllViews()
 
@@ -194,7 +198,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-
+    // Draw the path on the map
     private fun drawPathOnMap(map: GoogleMap, pathPoints: List<PathPoint>) {
         val latLngList = pathPoints.map { LatLng(it.lat, it.lng) }
 
@@ -245,6 +249,7 @@ class HomeFragment : Fragment() {
         }
     }
 
+    // Create a custom marker with a circular image
     private fun createCustomMarker(imageUrl: String, callback: (BitmapDescriptor) -> Unit) {
         val markerView = LayoutInflater.from(requireContext()).inflate(R.layout.custom_marker, null)
         val imageView = markerView.findViewById<ImageView>(R.id.marker_image)
@@ -294,22 +299,26 @@ class HomeFragment : Fragment() {
             .submit() // Ensure the image is loaded
     }
 
+    // Get a marker icon with a specific color
     private fun getMarkerIcon(color: Int): BitmapDescriptor {
         val hsv = FloatArray(3)
         Color.colorToHSV(color, hsv)
         return BitmapDescriptorFactory.defaultMarker(hsv[0])
     }
 
+    // Format the timestamp to a readable date
     private fun formatDate(timestamp: Long): String {
         val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
         return dateFormat.format(Date(timestamp))
     }
 
+    // Convert a time string (HH:mm:ss) to seconds
     private fun String.toSeconds(): Int {
         val parts = this.split(":").map { it.toInt() }
         return parts[0] * 3600 + parts[1] * 60 + parts[2]
     }
 
+    // Convert seconds to a time format (HH:mm:ss)
     private fun secondsToTimeFormat(seconds: Int): String {
         val hours = seconds / 3600
         val minutes = (seconds % 3600) / 60
@@ -317,10 +326,12 @@ class HomeFragment : Fragment() {
         return String.format("%02d:%02d:%02d", hours, minutes, secs)
     }
 
+    // Show a toast message
     private fun showToast(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
+    // Data class to hold the last activity details
     data class LastActivity(
         val distance: Double,
         val duration: String,

@@ -83,6 +83,7 @@ class PauseRunningFragment : Fragment() {
         }
     }
 
+    // Service connection to bind to TrackingService
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val binder = service as TrackingService.LocalBinder
@@ -96,6 +97,7 @@ class PauseRunningFragment : Fragment() {
         }
     }
 
+    // Runnable to update timer every second
     private val timerRunnable = object : Runnable {
         override fun run() {
             trackingService?.let {
@@ -110,6 +112,7 @@ class PauseRunningFragment : Fragment() {
         }
     }
 
+    // Function to start location updates
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -118,6 +121,7 @@ class PauseRunningFragment : Fragment() {
         requireContext().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
 
+    // Function to create the view for the fragment
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -174,6 +178,7 @@ class PauseRunningFragment : Fragment() {
         return view
     }
 
+    // Function to handle camera permission request
     private fun animateButton(button: View) {
         val scaleAnimation = ScaleAnimation(
             1f, 0.9f,
@@ -198,6 +203,7 @@ class PauseRunningFragment : Fragment() {
         button.startAnimation(scaleAnimation)
     }
 
+    // Function to start location updates
     private fun startLocationUpdates(googleMap: GoogleMap) {
         val locationRequest = LocationRequest.create().apply {
             interval = 5000
@@ -248,6 +254,7 @@ class PauseRunningFragment : Fragment() {
         }, Looper.getMainLooper())
     }
 
+    // Function to toggle pause state
     private fun togglePause() {
         if (tracking) {
             tracking = false
@@ -261,6 +268,7 @@ class PauseRunningFragment : Fragment() {
         }
     }
 
+    // Function to save run data to Firestore
     private fun saveRunData(): String {
         val duration = tvTime.text
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return ""
@@ -302,6 +310,7 @@ class PauseRunningFragment : Fragment() {
         return runId
     }
 
+    // Function to calculate distance
     private fun calculateDistance(): Double {
         var distance = 0.0
         for (i in 0 until pathPoints.size - 1) {
@@ -320,12 +329,14 @@ class PauseRunningFragment : Fragment() {
         return (distance / 1000.0)
     }
 
+    // Function to calculate calories
     private fun calculateCalories(): Double {
         val distance = calculateDistance()
         val caloriesPerKm = 65
         return distance * caloriesPerKm
     }
 
+    // Function to calculate average pace
     private fun calculateAveragePace(): Double {
         val distance = calculateDistance()
         if (seconds == 0) return 0.0
@@ -333,6 +344,7 @@ class PauseRunningFragment : Fragment() {
         return pace
     }
 
+    // Function to show image selection dialog
     private fun showImageSelectionDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_image_selection, null)
         val dialog = AlertDialog.Builder(requireContext())
@@ -357,6 +369,7 @@ class PauseRunningFragment : Fragment() {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
+    // Function to open camera
     private fun openCamera() {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (cameraIntent.resolveActivity(requireActivity().packageManager) != null) {
@@ -370,11 +383,13 @@ class PauseRunningFragment : Fragment() {
         }
     }
 
+    // Function to open gallery
     private fun openGallery() {
         val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         startActivityForResult(galleryIntent, GALLERY_REQUEST_CODE)
     }
 
+    // Function to handle activity result
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
@@ -396,6 +411,7 @@ class PauseRunningFragment : Fragment() {
         }
     }
 
+    // Function to show confirmation dialog
     private fun showConfirmationDialog(image: Bitmap, userId: String) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_confirmation_upload, null)
         val dialog = AlertDialog.Builder(requireContext())
@@ -426,6 +442,7 @@ class PauseRunningFragment : Fragment() {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
+    // Function to upload image to Firebase
     private fun showConfirmationDialog(imageUri: Uri, userId: String) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_confirmation_upload, null)
         val dialog = AlertDialog.Builder(requireContext())
@@ -456,6 +473,7 @@ class PauseRunningFragment : Fragment() {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
+    // Function to upload image to Firebase
     private fun uploadImageToFirebase(image: Bitmap, userId: String, caption: String) {
         val timestamp = System.currentTimeMillis()
         val storageRef = FirebaseStorage.getInstance().reference
@@ -495,6 +513,7 @@ class PauseRunningFragment : Fragment() {
         }
     }
 
+    // Function to add marker at location
     private fun uploadImageToFirebase(imageUri: Uri, userId: String, caption: String) {
         val timestamp = System.currentTimeMillis()
         val storageRef = FirebaseStorage.getInstance().reference
@@ -530,6 +549,7 @@ class PauseRunningFragment : Fragment() {
         }
     }
 
+    // Function to add marker at location
     private fun addMarkerAtLocation(latLng: LatLng, imageUri: String, caption: String?) {
         val markerTitle = if (caption.isNullOrEmpty()) "Checkpoint" else caption
         createCustomMarker(imageUri) { bitmapDescriptor ->
@@ -546,6 +566,7 @@ class PauseRunningFragment : Fragment() {
         }
     }
 
+    // Function to create custom marker
     private fun createCustomMarker(imageUrl: String, callback: (BitmapDescriptor) -> Unit) {
         val markerView = LayoutInflater.from(requireContext()).inflate(R.layout.custom_marker, null)
         val imageView = markerView.findViewById<ImageView>(R.id.marker_image)
@@ -587,6 +608,7 @@ class PauseRunningFragment : Fragment() {
             .submit()
     }
 
+    // Function to check camera permission
     private fun checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
             != PackageManager.PERMISSION_GRANTED) {
@@ -600,6 +622,7 @@ class PauseRunningFragment : Fragment() {
         }
     }
 
+    //  Function to request camera permission
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -625,18 +648,21 @@ class PauseRunningFragment : Fragment() {
         }
     }
 
+    // Function to handle lifecycle events
     override fun onResume() {
         super.onResume()
         mapView.onResume()
         handler.post(runnable)
     }
 
+    // Function to handle lifecycle events
     override fun onPause() {
         super.onPause()
         mapView.onPause()
         handler.removeCallbacks(runnable)
     }
 
+    // Function to handle lifecycle events
     override fun onDestroy() {
         super.onDestroy()
         mapView.onDestroy()
@@ -646,11 +672,13 @@ class PauseRunningFragment : Fragment() {
         trackingService = null
     }
 
+    // Function to handle lifecycle events
     override fun onLowMemory() {
         super.onLowMemory()
         mapView.onLowMemory()
     }
 
+    // Function to handle lifecycle events
     companion object {
         private const val CAMERA_REQUEST_CODE = 1002
         private const val GALLERY_REQUEST_CODE = 1003

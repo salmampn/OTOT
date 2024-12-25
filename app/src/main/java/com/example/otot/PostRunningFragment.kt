@@ -47,6 +47,7 @@ class PostRunningFragment : Fragment() {
     // Map to hold markers and their associated PathPoint data
     private val markerMap = mutableMapOf<Marker, PathPoint>()
 
+    // Required empty public constructor
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -85,6 +86,7 @@ class PostRunningFragment : Fragment() {
         return view
     }
 
+    // Required empty public constructor
     private fun drawRunPath(runId: String) {
         val db = FirebaseFirestore.getInstance()
         db.collection("history").document(runId).get().addOnSuccessListener { document ->
@@ -173,6 +175,7 @@ class PostRunningFragment : Fragment() {
         }
     }
 
+    // Create a custom marker with a circular image
     private fun createCustomMarker(imageUrl: String, callback: (BitmapDescriptor) -> Unit) {
         val markerView = LayoutInflater.from(requireContext()).inflate(R.layout.custom_marker, null)
         val imageView = markerView.findViewById<ImageView>(R.id.marker_image)
@@ -217,12 +220,14 @@ class PostRunningFragment : Fragment() {
             .submit() // Ensure the image is loaded
     }
 
+    // Get a marker icon with a specific color
     private fun getMarkerIcon(color: Int): BitmapDescriptor {
         val hsv = FloatArray(3)
         Color.colorToHSV(color, hsv)
         return BitmapDescriptorFactory.defaultMarker(hsv[0])
     }
 
+    // Show the image dialog with the image URL and caption
     private fun showImageDialog(imageUrl: String, caption: String?) {
         // Disable map interaction
         mapView.isEnabled = false
@@ -253,21 +258,25 @@ class PostRunningFragment : Fragment() {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
+    // Required empty public constructor
     override fun onResume() {
         super.onResume()
         mapView.onResume()
     }
 
+    // Required empty public constructor
     override fun onPause() {
         super.onPause()
         mapView.onPause()
     }
 
+    // Required empty public constructor
     override fun onDestroy() {
         super.onDestroy()
         mapView.onDestroy()
     }
 
+    // Required empty public constructor
     override fun onLowMemory() {
         super.onLowMemory()
         mapView.onLowMemory()

@@ -6,6 +6,7 @@
     android:background="@drawable/confirmation_background"
     android:padding="16dp">
 
+    <!-- The title of the dialog -->
     <TextView
         android:id="@+id/dialog_title"
         android:layout_width="wrap_content"
@@ -17,6 +18,7 @@
         android:textStyle="bold"
         android:layout_gravity="center"/>
 
+    <!-- The message of the dialog -->
     <TextView
         android:id="@+id/dialog_message"
         android:layout_width="wrap_content"
@@ -26,6 +28,7 @@
         android:textSize="16sp"
         android:layout_marginTop="8dp"/>
 
+    <!-- The image view to display the image to be uploaded -->
     <ImageView
         android:id="@+id/dialog_image"
         android:layout_width="match_parent"
@@ -33,6 +36,7 @@
         android:layout_marginTop="16dp"
         android:scaleType="fitCenter"/>
 
+    <!-- The caption of the image -->
     <EditText
         android:id="@+id/caption"
         android:layout_width="match_parent"
@@ -45,7 +49,7 @@
         android:background="@drawable/edit_profile_form"
         />
 
-
+    <!-- The buttons to retake or upload the image -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

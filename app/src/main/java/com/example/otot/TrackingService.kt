@@ -30,10 +30,12 @@ class TrackingService : Service() {
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
 
+    // Binder class to allow access to the service
     inner class LocalBinder : Binder() {
         fun getService(): TrackingService = this@TrackingService
     }
 
+    // Initialize the service
     override fun onCreate() {
         super.onCreate()
         startForegroundService()
@@ -42,6 +44,7 @@ class TrackingService : Service() {
         setupLocationCallback()
     }
 
+    // Start the service as a foreground service
     private fun startForegroundService() {
         val channelId = "tracking_channel"
         val channelName = "Tracking Service"
@@ -61,6 +64,7 @@ class TrackingService : Service() {
         startForeground(1, notification)
     }
 
+    // Set up the location request
     private fun setupLocationRequest() {
         locationRequest = LocationRequest.create().apply {
             interval = 2000 // Update interval
@@ -69,6 +73,7 @@ class TrackingService : Service() {
         }
     }
 
+    // Set up the location callback
     private fun setupLocationCallback() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
@@ -82,12 +87,14 @@ class TrackingService : Service() {
         }
     }
 
+    // Start the service
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startTimer()
         startLocationUpdates()
         return START_STICKY
     }
 
+    // Start location updates
     private fun startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
             ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {// Handle permission request if needed
@@ -96,10 +103,12 @@ class TrackingService : Service() {
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
     }
 
+    // Bind the service
     override fun onBind(intent: Intent?): IBinder {
         return binder
     }
 
+    // Start the timer
     fun startTimer() {
         if (!running) {
             running = true
@@ -107,6 +116,7 @@ class TrackingService : Service() {
         }
     }
 
+    // Timer runnable to update the timer
     private val timerRunnable = object : Runnable {
         override fun run() {
             seconds++
@@ -114,25 +124,30 @@ class TrackingService : Service() {
         }
     }
 
+    // Pause the timer
     fun pauseTimer() {
         handler.removeCallbacks(timerRunnable)
         running = false
     }
 
+    // Get the current timer value
     fun getSeconds(): Int {
         return seconds
     }
 
+    // Stop the timer
     fun stopTimer() {
         seconds = 0
         handler.removeCallbacks(timerRunnable)
         running = false
     }
 
+    // Stop the service
     private fun stopLocationUpdates() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
+    // Destroy the service
     override fun onDestroy() {
         super.onDestroy()
         stopLocationUpdates() // Ensure location updates are stopped when the service is destroyed

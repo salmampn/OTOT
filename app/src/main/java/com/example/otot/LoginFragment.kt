@@ -85,6 +85,7 @@ class LoginFragment : Fragment() {
         return view
     }
 
+    // Login user with email and password
     private fun loginUser(email: String, password: String) {
         firebaseAuth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(requireActivity()) { task ->
@@ -100,6 +101,7 @@ class LoginFragment : Fragment() {
             }
     }
 
+    // Sign in with Google
     private fun signInWithGoogle() {
         // Sign out of GoogleSignInClient to clear the cached account
         googleSignInClient.signOut().addOnCompleteListener {
@@ -108,6 +110,7 @@ class LoginFragment : Fragment() {
         }
     }
 
+    // Handle Google sign in result
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
@@ -116,6 +119,7 @@ class LoginFragment : Fragment() {
         }
     }
 
+    // Handle Google sign in result
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
@@ -126,6 +130,7 @@ class LoginFragment : Fragment() {
         }
     }
 
+    // Authenticate with Firebase using Google account
     private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
         firebaseAuth.signInWithCredential(credential)
@@ -168,6 +173,7 @@ class LoginFragment : Fragment() {
             }
     }
 
+    // Navigate to InitProfileFragment
     private fun navigateToInitProfile(googleAccount: GoogleSignInAccount) {
         // Pre-populate user data in Firestore
         val user = firebaseAuth.currentUser

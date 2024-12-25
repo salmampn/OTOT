@@ -37,6 +37,7 @@ class SignupFragment : Fragment() {
     private lateinit var emailInput: EditText
     private lateinit var passwordInput: EditText
 
+    // Initialize the activity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -51,6 +52,7 @@ class SignupFragment : Fragment() {
         googleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
     }
 
+    // Initialize the fragment
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -141,6 +143,7 @@ class SignupFragment : Fragment() {
         return true
     }
 
+    // Sign in with Google
     private fun signInWithGoogle() {
         // Sign out of GoogleSignInClient to clear the cached account
         googleSignInClient.signOut().addOnCompleteListener {
@@ -149,6 +152,7 @@ class SignupFragment : Fragment() {
         }
     }
 
+    // Handle Google sign in result
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
@@ -157,6 +161,7 @@ class SignupFragment : Fragment() {
         }
     }
 
+    // Handle Google sign in result
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
@@ -167,6 +172,7 @@ class SignupFragment : Fragment() {
         }
     }
 
+    // Authenticate with Firebase using Google sign in
     private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
         firebaseAuth.signInWithCredential(credential)
@@ -183,6 +189,7 @@ class SignupFragment : Fragment() {
             }
     }
 
+    // Check if the user already exists in Firestore
     private fun checkIfUserExists(userId: String?, displayName: String?, photoUrl: String?) {
         if (userId != null) {
             val firestore = FirebaseFirestore.getInstance()
@@ -208,6 +215,7 @@ class SignupFragment : Fragment() {
         }
     }
 
+    // Save user information to Firestore
     private fun saveUserToFirestore(userId: String?, displayName: String?, photoUrl: String?) {
         if (userId != null) {
             val userMap = hashMapOf(

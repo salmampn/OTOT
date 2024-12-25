@@ -92,6 +92,7 @@ class HistoryDetailFragment : Fragment() {
         }
     }
 
+    // Load history data from Firestore
     private fun loadHistoryData(map: GoogleMap) {
         firestore.collection("history").document(runId)
             .get()
@@ -135,6 +136,7 @@ class HistoryDetailFragment : Fragment() {
             }
     }
 
+    // Draw the path on the map
     private fun drawPathOnMap(map: GoogleMap, latLngList: List<LatLng>, pathPoints: List<PathPoint>) {
         if (latLngList.isNotEmpty()) {
             val polylineOptions = PolylineOptions().color(Color.RED).width(5f)
@@ -195,6 +197,7 @@ class HistoryDetailFragment : Fragment() {
         }
     }
 
+    // Create a custom marker using a layout with an ImageView
     private fun createCustomMarker(imageUrl: String, callback: (BitmapDescriptor) -> Unit) {
         val markerView = LayoutInflater.from(requireContext()).inflate(R.layout.custom_marker, null)
         val imageView = markerView.findViewById<ImageView>(R.id.marker_image)
@@ -239,12 +242,14 @@ class HistoryDetailFragment : Fragment() {
             .submit() // Ensure the image is loaded
     }
 
+    // Get a marker icon with a specific color
     private fun getMarkerIcon(color: Int): BitmapDescriptor {
         val hsv = FloatArray(3)
         Color.colorToHSV(color, hsv)
         return BitmapDescriptorFactory.defaultMarker(hsv[0])
     }
 
+    // Show the image dialog with the specified image URL and caption
     private fun showImageDialog(imageUrl: String, caption: String?) {
         // Disable map interaction
         mapView.isEnabled = false
@@ -275,6 +280,7 @@ class HistoryDetailFragment : Fragment() {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
+    // Show a confirmation dialog before deleting the history
     private fun showDeleteConfirmation() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_delete_history_confirmation, null)
         val dialogBuilder = AlertDialog.Builder(requireContext())
@@ -308,26 +314,31 @@ class HistoryDetailFragment : Fragment() {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
+    // Lifecycle methods for the MapView
     override fun onResume() {
         super.onResume()
         mapView.onResume()
     }
 
+    // Lifecycle methods for the MapView
     override fun onPause() {
         super.onPause()
         mapView.onPause()
     }
 
+    // Lifecycle methods for the MapView
     override fun onDestroyView() {
         super.onDestroyView()
         mapView.onDestroy()
     }
 
+    // Lifecycle methods for the MapView
     override fun onLowMemory() {
         super.onLowMemory()
         mapView.onLowMemory()
     }
 
+    // Lifecycle methods for the MapView
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         mapView.onSaveInstanceState(outState)

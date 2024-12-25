@@ -121,6 +121,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Set the back arrow color to white
     private fun setBackArrowColor(toolbar: Toolbar) {
         toolbar.navigationIcon?.setColorFilter(
             ContextCompat.getColor(this, android.R.color.white),
@@ -128,6 +129,7 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    // Check if the user is logged in
     private fun checkUserAuthentication() {
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser == null) {
@@ -139,6 +141,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Update bottom navigation icons
     private fun updateBottomNavIcons(homeIcon: Int, trackIcon: Int, historyIcon: Int, profileIcon: Int) {
         bottomNavigationView.menu.findItem(R.id.nav_home).setIcon(homeIcon)
         bottomNavigationView.menu.findItem(R.id.nav_track).setIcon(trackIcon)
@@ -146,6 +149,7 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.menu.findItem(R.id.nav_profile).setIcon(profileIcon)
     }
 
+    // Handle back arrow navigation
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }

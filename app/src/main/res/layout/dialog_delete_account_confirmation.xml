@@ -2,6 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <!-- The root layout of the dialog -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -11,6 +12,7 @@
         android:paddingBottom="32dp"
         android:paddingHorizontal="24dp">
 
+        <!-- The title of the dialog -->
         <TextView
             android:id="@+id/dialog_title"
             android:layout_width="wrap_content"
@@ -21,6 +23,7 @@
             android:fontFamily="@font/roboto_bold"
             android:textColor="@color/white" />
 
+        <!-- The message of the dialog -->
         <TextView
             android:id="@+id/dialog_message"
             android:layout_width="wrap_content"
@@ -30,6 +33,7 @@
             android:layout_marginTop="4dp"
             android:textColor="@color/white_80_percent" />
 
+        <!-- The buttons to cancel or delete the account -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
