@@ -63,6 +63,7 @@ Teknologi yang digunakan di projek ini:
 - Firebase
 
 <h2>🤔 Initial Design</h2>
+
 OTOT Prototype:
 - [Figma](https://www.figma.com/design/96pe433QG3uYQglXExz7uO/OTOT?node-id=1895-3270&t=3s1SUn0Yfn6Esutn-1) -  OTOT UI/UX
   
